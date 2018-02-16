@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# @see /usr/sbin/lb
+# @see /usr/sbin/lb-queue
+
+_VARIANT="default"
+
+_cleanup_() {
+   local _return="1"
+	while [ "$_return" -eq "1" ]
+	do
+		umount $(mount | grep $_VARIANT/root | awk {'print$3'})
+		_return=$(mount | grep $_VARIANT/root | wc -l)
+	done
+}
+
+if [ "$#" -gt "0" ]
+then
+	_OPTIONS="-Variant $1"
+	_VARIANT=$1
+	
+	shift
+fi
+
+_DATABASE_FILE=/var/cache/lb/$_VARIANT
+_LOG_FILE=/var/log/lb/$_VARIANT
+
+mkdir -p $(dirname $_DATABASE_FILE)
+mkdir -p $(dirname $_LOG_FILE)
+
+java -DDATABASE_FILE=$_DATABASE_FILE -jar target/cli-0.1-SNAPSHOT-shaded.jar -NodeId $(cat /proc/cmdline | tr ' ' '\n' | grep crypt_root | sed -e "s/.*\///") &> $_LOG_FILE
+
+_cleanup_

@@ -1,0 +1,5 @@
+TODO:
+1. finish migration from python to java
+   a. documentation - generated automatically from git repository patches and installed in image for review
+   b. ubuntu / debian / fedora support needs tested / fixed
+   c. prepare base image / example of how this works (with funtoo)

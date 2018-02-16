@@ -1,0 +1,33 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>com.walterjwhite</groupId>
+		<artifactId>modules</artifactId>
+		<version>0.0.15-SNAPSHOT</version>
+	</parent>
+
+	<groupId>com.walterjwhite.modules</groupId>
+	<artifactId>linux-builder</artifactId>
+	<packaging>pom</packaging>
+	
+	<name>Linux Builder - parent pom</name>
+	
+	<modules>
+		<module>api</module>
+		<module>impl</module>
+		<module>modules</module>
+	</modules>
+	
+	<dependencies>
+	</dependencies>
+
+	<scm>
+		<connection>scm:git:ssh://git@localhost:/projects/active/github.com/java/modules/linux-builder.git</connection>
+		<developerConnection>scm:git:ssh://git@localhost:/projects/active/github.com/java/modules/linux-builder.git</developerConnection>
+		<url>https://github.com/walterjwhite/linux-builder.git</url>
+	    </scm>
+</project>

@@ -1,0 +1,548 @@
+#!/usr/bin/python3
+
+# goal - generate a PDF with all of the patches documented
+# tasks
+# 1. generate master tex and PDF                           done
+# 2. generate section tex documents                        done
+# 3. generate patch tex documents                          done
+# 4. generate patch file listing                           done
+# 5. generate git history listing                          pending
+# 6. generate patch runlevel listing                       done, reword (use rc-update)
+# 7. generate patch chown/chmod listing                    done
+# 8. generate patch download listing                       pending
+# 9. generate users created                                done
+# 10. generate package listing                             done
+# 11. generate patch documentation, how to use something   pending
+# 12. generate patch documentation for specific tag (router / workstation) pending
+# 13. refactor code and make it reusable                   pending
+
+import os, subprocess
+from optparse import OptionParser
+import yaml
+
+
+def __write_table__(f, caption, column_headers, column_format, data):
+    data.sort()
+
+    f.write('\\begin{table}[!htbp]\n')
+    f.write('\\centering\n')
+    f.write('\\caption{' + caption.replace('_', '\_') + '}\n')
+
+    # alternate colors
+    f.write('\\rowcolors{2}{gray!15}{white}\n')
+    f.write('\\begin{tabular}{' + column_format + '}\n')
+    f.write('\\hline\n')
+
+    f.write(__get_column_headers__(column_headers) + '\\\\ \\hline\n')
+
+    column_count = len(column_headers)
+    for row in data:
+        __write_table_row__(f, column_count, row)
+
+    f.write('\\end{tabular}\n')
+    f.write('\\end{table}\n\n')
+
+
+def __get_column_headers__(column_headers):
+    return('\\rowcolor{cyan}\n' + ' & '.join('\\textbf{' + column_header + '}' for column_header in column_headers) + '\n')
+
+def __write_table_row__(f, column_count, row):
+    i = 0
+    while i < column_count:
+        if i < len(row):
+            f.write(__get_cell_value__(row[i]))
+        else:
+            f.write('n/a')
+
+        if i < column_count - 1:
+            f.write(' & ')
+
+        i += 1
+
+    f.write(' \\\\ \\hline\n')
+
+
+def __get_cell_value__(cell):
+    if type(cell) is str:
+        if not cell or len(cell) == 0:
+            return('n/a')
+
+        return(cell.replace('_', '\_').replace('$', '\$'))
+    if type(cell) is bool or type(cell) is int:
+        return(str(cell))
+    if type(cell) is list:
+        if len(cell) == 0:
+            return('n/a')
+
+        return(' \\newline '.join(celli.replace('_', '\_').replace('$', '\$') for celli in cell))
+
+    raise(Exception('Unsupported type:'))
+
+
+# get title information from tag / branch
+def __process_title__(main_f, tag):
+    main_f.write('\\title{' + tag + '}\n')
+
+    # use today by default
+    main_f.write('\\date{}\n\n')
+
+
+# can be reused for updates, validations
+def __process_patches__(main_f, path='patches'):
+    main_f.write('\\section{' + path + '}\n\n')
+
+    i = 0
+    if os.path.exists(path):
+        # load all patches + dependencies
+        if os.path.exists(path):
+            for root, directories, files in os.walk(path):
+                directories.sort()
+                for directory in directories:
+                    # only include "active" patches
+                    if directory and directory.endswith(".patch") and root and root.find('active') >= 0:
+                        #if i % 10 == 0:
+                        #    main_f.write('\\clearpage\n\n')
+
+                        patch_path = os.path.join(root, directory)
+                        __process_patch__(main_f, patch_path)
+
+                        i += 1
+
+
+def __process_patch__(main_f, patch_path):
+    patch_tex = os.path.join(patch_path, 'patch.tex')
+
+    main_f.write('\input{' + patch_tex + '}\n')
+
+    with open(patch_tex, 'w') as f:
+        f.write('\\subsection{' + __get_patch_name__(patch_path).replace('_', '\_') + '}\n\n')
+
+        f.write('\\paragraph{Patch ' + __get_patch_name__(patch_path).replace('_', '\_') + '} patch\n\n')
+
+        # __process_patch_sections__(f. patch_path)
+        __process_patch_files__(f, patch_path)
+        __process_patch_files__(f, patch_path, path='profile')
+
+
+
+        __process_patch_use__(f, patch_path)
+
+        __process_patch_packages__(f, patch_path)
+
+        __process_users__(f, patch_path)
+
+        __process_patch_permissions__(f, patch_path)
+        __process_patch_run__(f, patch_path)
+
+        __get_audit_for_patch__(f, patch_path)
+        __get_dependencies_for_patch__(f, patch_path)
+        __get_downloads_for_patch__(f, patch_path)
+        __get_summary_for_patch__(f, patch_path)
+        __get_future_work_for_patch__(f, patch_path)
+
+        __get_tags_for_patch__(f, patch_path)
+        __get_usage_for_patch__(f, patch_path)
+
+        f.write('\\clearpage\n\n')
+
+
+def __process_users__(patch_f, patch_path):
+    users_path = os.path.join(patch_path, 'users.yaml')
+
+    if os.path.exists(users_path):
+        #patch_f.write('\\section{Users}\n\n')
+
+        users = None
+        with open(users_path, 'r') as f:
+            users = yaml.load(f)
+
+        users_data = []
+
+        for user in users:
+            system = False
+            try:
+                system = users[user]['system']
+            except KeyError:
+                pass
+
+            groups = []
+            try:
+                groups = users[user]['groups']
+            except KeyError:
+                pass
+
+            users_data.append([user, users[user]['uid'], system, users[user]['shell'], groups])
+
+        __write_table__(patch_f, 'Users', ['Username', 'UID', 'System', 'Shell', 'Groups'], '|l|l|l|l|p{50mm}|', users_data)
+        patch_f.write('\\clearpage\n\n')
+
+
+def __process_use__(main_f):
+    for root, directories, files in os.walk('documentation'):
+        for dfile in files:
+            if dfile.endswith('.use'):
+                with open(os.path.join(root, dfile), 'r') as f:
+                    for line in f.readlines():
+                        main_f.write(line)
+
+
+def __process_patch_sections__(patch):
+    pass
+
+
+# lists the use flags used by the patch
+def __process_patch_use__(patch_f, patch_path):
+    __process_use_flags__(patch_f, os.path.join(patch_path, 'package.use'), 'Package Use Flags')
+
+    # __process_use_flags__(patch_f, package_use, 'Package Use Flags')
+    __process_system_use_flags__(patch_f, os.path.join(patch_path, 'epro.mixin'), 'Mixins')
+    __process_system_use_flags__(patch_f, os.path.join(patch_path, 'system.use'), 'System Use Flags')
+
+
+def __get_patch_name__(patch_path):
+    return patch_path.split('.patch')[0].split('/')[-1]
+
+
+def __process_use_flags__(patch_f, path, title):
+    if not os.path.exists(path):
+        return
+
+    patch_use_data = []
+    with open(path, 'r') as cf:
+        for line in cf:
+            if line and len(line) > 0 and not line.startswith("#"):
+                split_line = line.split()
+
+                if split_line and len(split_line) > 0:
+                    package_atom = split_line[0]
+
+                    # split_line.remove(0)
+                    split_line.pop(0)
+
+                    patch_use_data.append([package_atom, split_line])
+
+    __write_table__(patch_f, __get_patch_name__(path) + ' ' + title, ['Package Atom', 'Use Flags'], '|l|p{50mm}|', patch_use_data)
+
+
+def __process_system_use_flags__(patch_f, path, title):
+    if not os.path.exists(path):
+        return
+
+    #patch_f.write('\\rowcolor{blue!25} \\thead{' + title + '} \\\\ \\hline\n')
+
+    patch_use_data = []
+    with open(path, 'r') as cf:
+        for line in cf:
+            line = line.strip()
+
+            if line and not line.startswith("#"):
+                patch_use_data.append([line])
+
+    __write_table__(patch_f, __get_patch_name__(path) + ' ' + title, [title], '|p{50mm}|', patch_use_data)
+
+
+# generates a list of files this patch provides
+def __process_patch_files__(patch_f, patch_path, path='copy-files'):
+    copy_files = os.path.join(patch_path, path)
+    if not os.path.exists(copy_files):
+        return
+
+    files_data = []
+    for root, directories, files in os.walk(copy_files):
+        directories.sort()
+        files.sort()
+
+        for dfile in files:
+            files_data.append([os.path.join(root, dfile).replace(os.path.join(patch_path, path), '')])
+
+    __write_table__(patch_f, __get_patch_name__(patch_path) + ' Files', ['Path'], '|l|', files_data)
+
+
+def __process_patch_packages__(patch_f, patch_path):
+    packages = os.path.join(patch_path, 'packages')
+    if not os.path.exists(packages):
+        return
+
+    packages_data = []
+    with open(packages, 'r') as f:
+        for package in f:
+            package = package.strip()
+
+            if package and not package.startswith('#'):
+                packages_data.append([package])
+
+    __write_table__(patch_f, __get_patch_name__(patch_path) + ' Packages', ['Package Atom'], '|l|', packages_data)
+
+
+def __process_patch_permissions__(f, patch_path):
+    __process_patch_permissions_type__(f, patch_path, 'chmod')
+    __process_patch_permissions_type__(f, patch_path, 'chown')
+
+    __process_patch_permissions_type__(f, patch_path, 'runlevel')
+
+
+def __process_patch_permissions_type__(patch_f, patch_path, type):
+    type_path = os.path.join(patch_path, type)
+    if not os.path.exists(type_path):
+        return
+
+    permissions_data = []
+    with open(type_path, 'r') as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('#'):
+                permissions_data.append([type + ' ' + line])
+
+    __write_table__(patch_f, __get_patch_name__(patch_path) + ' ' + type, [type], '|l|', permissions_data)
+
+
+def __process_patch_run__(patch_f, patch_path):
+    run_path = os.path.join(patch_path, 'run')
+    if not os.path.exists(run_path):
+        return
+
+    run_data = [[run_path]]
+
+    __write_table__(patch_f, __get_patch_name__(patch_path) + ' run', ['run'], '|l|', run_data)
+
+
+# use git log
+def __process_git_history__(main_f):
+    main_f.write('\\section{git History}\n\n')
+
+    main_f.write('\\input{git.tex}\n\n')
+
+
+    with open('git.tex', 'w') as f:
+        commits_data = []
+        for commit in __git_get_all_commits__():
+
+            message = __git_get_commit_message_for_commit__(commit)
+            delta = __git_get_changed_files_for_commit__(commit)
+
+            #print(message)
+            #print(delta)
+            #exit(1)
+
+            # line is too large
+            #f.write(commit + ' & ' + message + ' & ' + ' \\newline '.join(delta) + ' \\\\ \\hline\n')
+            #f.write(commit + ' & ' + message + ' & test \\\\ \\hline\n')
+            commits_data.append([commit, message, 'test'])
+
+            #f.write(message + ' & ' + ' \\newline '.join(delta) + ' \\\\ \\hline\n')
+
+        __write_table__(f, 'git history', ['commit', 'message', 'files'], '|l|p{50mm}|p{50mm}|', commits_data)
+
+
+def __git_get_all_commits__():
+    #return subprocess.check_output(['git', 'rev-list', '--all']).strip().split('\n')
+    return subprocess.check_output(['git', 'rev-list', '--all', '--abbrev-commit']).strip().decode("utf-8").split('\n')
+
+
+def __git_get_commit_message_for_commit__(commit):
+    #decode("utf-8")
+    #return subprocess.check_output(['git', 'log', '--all']).strip().decode("utf-8")
+    #print('running: git log --format=%s ' + commit)
+    return subprocess.check_output(['git', 'log', '--format=%s', '-n', '1', commit]).strip().decode("utf-8").replace('&', '\\&')
+
+
+def __git_get_changed_files_for_commit__(commit):
+    # git show --pretty="format:" --name-only {}'.format(commit)
+    return subprocess.check_output(['git', 'show', '--pretty=format:', '--name-only', commit]).strip().decode("utf-8").replace('&', '\\&').split('\n')
+        #.decode("utf-8")
+#unicodedata.normalize('NFKD', input_str)
+
+
+# prints out the audit information for the patch
+def __get_audit_for_patch__(patch_f, patch_path):
+    summary_path = os.path.join(patch_path, 'audit/summary')
+
+    if os.path.exists(summary_path):
+        #patch_f.write('\\paragraph{Summary} \\\\ \n')
+        patch_f.write('\\paragraph{\n')
+        with open(summary_path, 'r') as f:
+            #summary = ' '.join(line + '\n \\\\' for line in f.readlines())
+            for line in f.readlines():
+                line = line.strip().replace('_', '\\_')
+                if line and len(line) > 0:
+                    patch_f.write(line.strip() + '\n')
+                    #+ '\\\\ \n')
+
+        patch_f.write('}\n')
+
+    audit_records_path = os.path.join(patch_path, 'audit/records')
+    audit_records = []
+    has_records = False
+    if os.path.exists(audit_records_path):
+        for root, directories, files in os.walk(audit_records_path):
+            #directories.sort()
+            files.sort()
+            for file in files:
+                year = root.split('/')[-1]
+                month = file.split('.')[0]
+                day = file.split('.')[1]
+
+                # convert month to the textual equivalent
+                #\newdateformat{mydate}{\twodigit{\THEDAY}{ }\shortmonthname[\THEMONTH], \THEYEAR}
+
+
+                message = None
+                with open(os.path.join(root, file), 'r') as f:
+                    message = f.read()
+
+                audit_records.append([year, month, day, message])
+                has_records = True
+
+    if has_records:
+        __write_table__(patch_f, '{} Audit history'.format(patch_path.split('.patch')[0].split('/')[-1]), ['year', 'month', 'day', 'message'], '|l|l|l|p{100mm}|', audit_records)
+
+
+# prints out the dependencies for the patch
+def __get_dependencies_for_patch__(patch_f, patch_path):
+    dependencies_path = os.path.join(patch_path, 'dependencies')
+
+    if os.path.exists(dependencies_path):
+        dependencies = []
+        with open(dependencies_path, 'r') as f:
+            for dependency in f:
+                dependency = dependency.strip()
+                if dependency and len(dependency) > 0 and not dependency.startswith('#'):
+                    dependencies.append([dependency])
+
+        __write_table__(patch_f, '{} Dependencies'.format(__get_patch_name__(patch_path)), ['Dependency'], '|l|', dependencies)
+
+
+# prints out the downloads for the patch
+def __get_downloads_for_patch__(patch_f, patch_path):
+    downloads_path = os.path.join(patch_path, 'downloads')
+
+    if os.path.exists(downloads_path):
+        downloads = []
+        with open(downloads_path, 'r') as f:
+            for download in f:
+                download = download.strip()
+                if download and len(download) > 0 and download.startswith('echo') and not download.startswith('#'):
+                    download = download.replace('echo -e ', '').replace('"', '')
+
+                    downloads.append([download.split(',')])
+
+        __write_table__(patch_f, '{} Downloads'.format(__get_patch_name__(patch_path)), ['URL', 'local filename'], '|p{10cm}|p{5cm}|', downloads)
+
+
+# prints out the summary for the patch
+def __get_summary_for_patch__(patch_f, patch_path):
+    summary_path = os.path.join(patch_path, 'documentation/summary')
+
+    if os.path.exists(summary_path):
+        #patch_f.write('\\paragraph{Summary} \\\\ \n')
+        patch_f.write('\\paragraph{\n')
+        with open(summary_path, 'r') as f:
+            #summary = ' '.join(line + '\n \\\\' for line in f.readlines())
+            for line in f.readlines():
+                line = line.strip().replace('_', '\\_')
+                if line and len(line) > 0:
+                    patch_f.write(line.strip() + '\n')
+                    #+ '\\\\ \n')
+
+        patch_f.write('}\n')
+
+
+# prints out the future work for the patch
+def __get_future_work_for_patch__(patch_f, patch_path):
+    future_work_path = os.path.join(patch_path, 'documentation/future-work')
+
+    if os.path.exists(future_work_path):
+        tasks = []
+        with open(future_work_path, 'r') as f:
+            #summary = ' '.join(line + '\n \\\\' for line in f.readlines())
+            for line in f.readlines():
+                line = line.strip()
+                if line and len(line) > 0:
+                    tasks.append([line])
+
+        if tasks and len(tasks) > 0:
+            __write_table__(patch_f, '{} Future Work'.format(__get_patch_name__(patch_path)), ['task'], '|p{15cm}|', tasks)
+
+
+def __get_tags_for_patch__(patch_f, patch_path):
+    tags_path = os.path.join(patch_path, 'tags')
+
+    if os.path.exists(tags_path):
+        tags = []
+        with open(tags_path, 'r') as f:
+            #summary = ' '.join(line + '\n \\\\' for line in f.readlines())
+            for line in f.readlines():
+                line = line.strip()
+                if line and len(line) > 0 and not line.startswith('#'):
+                    tags.append([line])
+
+        if tags and len(tags) > 0:
+            __write_table__(patch_f, '{} Tags'.format(__get_patch_name__(patch_path)), ['tag'], '|p{15cm}|', tags)
+
+
+def __get_usage_for_patch__(f, patch_path):
+    pass
+
+
+def __open_document__(main_f):
+    main_f.write('\\begin{document}\n')
+    main_f.write('\\maketitle\n')
+
+
+def __generate_toc__(main_f):
+    main_f.write('\\addcontentsline{toc}{subsection}{Preface}\n')
+    main_f.write('\\tableofcontents\n')
+    main_f.write('\\listoffigures\n')
+    main_f.write('\\listoftables\n\n')
+
+
+def __close_document__(main_f):
+    main_f.write('\\end{document}\n\n')
+
+
+def __generate_pdf__():
+    subprocess.check_call(
+            ['texi2pdf', 'documentation/generated/master.tex', '-o', 'documentation/generated/master.pdf'])
+
+
+def __get_command_line_arguments__():
+    parser = OptionParser()
+    #    parser.add_option('-d',
+    #                      dest='distribution',
+    #                      help='OS/distribution')
+    parser.add_option('-t',
+                      dest='tag',
+                      help='branch/tag to build')
+    #    parser.add_option('-s',
+    #                      dest='source',
+    #                      help='source git repository')
+
+    return parser.parse_args()[0]
+
+
+def main():
+    arguments = __get_command_line_arguments__()
+
+    with open('documentation/generated/master.tex', 'w') as f:
+        __process_use__(f)
+        __process_title__(f, arguments.tag)
+
+        __open_document__(f)
+        __generate_toc__(f)
+
+        __process_title__(f, arguments.tag)
+        #__process_users__(f, arguments.tag)
+
+        __process_patches__(f, 'patches')
+        __process_patches__(f, 'updates')
+        __process_patches__(f, 'validations')
+
+        __process_git_history__(f)
+
+        __close_document__(f)
+
+    __generate_pdf__()
+
+
+if __name__ == '__main__':
+    main()

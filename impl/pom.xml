@@ -1,0 +1,220 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.walterjwhite.modules</groupId>
+        <artifactId>linux-builder</artifactId>
+        <version>0.0.15-SNAPSHOT</version>
+    </parent>
+
+    <groupId>com.walterjwhite.modules.linux-builder</groupId>
+    <artifactId>impl</artifactId>
+    <packaging>jar</packaging>
+
+    <name>linux-builder - impl</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.walterjwhite.modules.shell</groupId>
+            <artifactId>impl</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.modules.download.providers</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.modules.ssh</groupId>
+            <artifactId>impl</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.modules.file.api</groupId>
+            <artifactId>service</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.modules.file</groupId>
+            <artifactId>impl</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+            <!--<scope>runtime</scope>-->
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.modules.file.providers</groupId>
+            <artifactId>local</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+            <!--<scope>runtime</scope>-->
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.modules.compression.modules</groupId>
+            <artifactId>xz</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+            <!--<scope>runtime</scope>-->
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.modules.encryption.api</groupId>
+            <artifactId>service</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.modules.encryption</groupId>
+            <artifactId>impl</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+            <!--<scope>runtime</scope>-->
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.infrastructure.google-guice</groupId>
+            <artifactId>core</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.modules.linux-builder.api</groupId>
+            <artifactId>service</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.infrastructure.dependencies</groupId>
+            <artifactId>jgit</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.infrastructure.dependencies</groupId>
+            <artifactId>expectit</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.infrastructure.dependencies</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.infrastructure.dependencies</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.infrastructure.dependencies</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.infrastructure.dependencies</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.infrastructure.dependencies</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+            <type>pom</type>
+        </dependency>
+
+        <!--
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-remote-driver</artifactId>
+            <version>2.53.0</version>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>com.walterjwhite.infrastructure.dependencies</groupId>
+            <artifactId>jbrowserdriver</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.infrastructure.google-guice.modules</groupId>
+            <artifactId>property</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.infrastructure.google-guice.modules</groupId>
+            <artifactId>property-test</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!--
+    <build>
+        <plugins>
+        <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>com.machinepublishers</groupId>
+                  <artifactId>jbrowserdriver</artifactId>
+                  <version>0.17.3</version>
+                  <classifier>uberjar</classifier>
+                  <outputDirectory>target</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.1</version>
+                <executions>
+                    <execution>
+                        <phase>portage</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.entityReference.ManifestResourceTransformer">
+                                    <mainClcom.walterjwhite.shell.impl.ExecutionUtilUtil
+                                    </mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    -->
+</project>

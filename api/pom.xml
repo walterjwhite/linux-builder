@@ -1,0 +1,34 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.walterjwhite.modules</groupId>
+        <artifactId>linux-builder</artifactId>
+        <version>0.0.15-SNAPSHOT</version>
+    </parent>
+
+    <groupId>com.walterjwhite.modules.linux-builder</groupId>
+    <artifactId>api</artifactId>
+    <version>0.0.15-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>linux-builder - API - parent pom</name>
+
+    <modules>
+        <module>model</module>
+        <module>service</module>
+    </modules>
+
+    <dependencies>
+        <!--
+                <dependency>
+                    <groupId>javax.jdo</groupId>
+                    <artifactId>jdo-api</artifactId>
+                    <version>3.0.1</version>
+                </dependency>
+        -->
+    </dependencies>
+</project>

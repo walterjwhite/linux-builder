@@ -1,0 +1,62 @@
+Active Task:
+@Loggable throughout - remove, instead rely on "sensible" defaults
+
+producers
+ module
+ patch
+
+
+3. test system setup (stage3)
+
+Process Overview:
+0. checkout source code
+1. find all patches (read system/<tag>/patches and then all files)
+2. perform dependency management
+3. perform basic system setup
+   a. Fedora -> start with ISO
+   b. Gentoo / Funtoo -> start with stage 3 + other prep tasks
+4. run through patches / phases
+   a. after each phase, perform basic cleanup / sync / update (gentoo is emerge --sync && emerge --newuse -uD world -v)
+5. run system configuration
+6. install documentation
+7. package system
+8. install system
+9. generate documentation alongside each patch step and install it
+
+
+TODO:
+1. implement modules
+   a. building ModuleUtil to initialize module from a filename
+
+2. implement basic build
+   a. ability to run a dry-run (log commandLine only)
+
+Completed:
+0. checkout source code
+1. find all patches (read system/<tag>/patches and then all files)
+2. perform dependency management
+
+0. ModuleFactory
+   ModuleFactoryProducer
+
+1. implement modules
+2. implement module loading (setting up configuration automatically based on annotation)
+
+   clean up this code as this should allow us to create dependent bean objects easily with the configuration we need.
+
+implement modules:
+1. Runlevel X
+2. Replace?
+3. Pipl X
+4. Devpi X
+5. Groups X
+6. Groupadd X
+7. PackageUse X
+8. PackageUnmask X
+9. PackageMask X
+10. PackageAcceptKeywords X
+11. Eselect X
+12. EproProfile X
+13. EproMixin X
+14. EproFlavor X
+15. EproBuild X
