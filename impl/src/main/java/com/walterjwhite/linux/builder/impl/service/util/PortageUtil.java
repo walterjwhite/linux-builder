@@ -24,6 +24,8 @@ public class PortageUtil {
   }
 
   public static String get(final Collection<String> values) {
+    if (values == null || values.isEmpty()) return "";
+
     return (String.join(" ", values.toArray(new String[values.size()])));
   }
 }

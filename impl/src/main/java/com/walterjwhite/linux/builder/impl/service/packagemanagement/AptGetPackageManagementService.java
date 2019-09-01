@@ -60,9 +60,9 @@ public class AptGetPackageManagementService implements PackageManagementService 
   @Override
   public void update() throws Exception {
     run(
-        "DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confdef\" -o Dpkg::Options::=\"--force-confold\" install -f -qq --force-confold");
+        "DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confdef\" -o Dpkg::Options::=\"--force-confold\" install -f -qq");
     run(
-        "DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confdef\" -o Dpkg::Options::=\"--force-confold\" update -qq --force-confold");
+        "DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=\"--force-confdef\" -o Dpkg::Options::=\"--force-confold\" update -qq");
     run("DEBIAN_FRONTEND=noninteractive apt-get upgrade -qq");
     run("DEBIAN_FRONTEND=noninteractive apt-get autoremove -qq");
     run("DEBIAN_FRONTEND=noninteractive apt-get autoclean -qq");

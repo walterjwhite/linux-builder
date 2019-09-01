@@ -11,17 +11,12 @@ import com.walterjwhite.shell.impl.service.ShellCommandBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @ModuleSupports(
-  distribution = DistributionConfiguration.Linux,
-  configurer = YamlConfigurer.class,
-  configurationClass = Chown.class
-)
+    distribution = DistributionConfiguration.Linux,
+    configurer = YamlConfigurer.class,
+    configurationClass = Chown.class)
 public class ChownModule extends AbstractCollectionModule<Chown> {
-  private static final Logger LOGGER = LoggerFactory.getLogger(ChownModule.class);
-
   protected final ShellExecutionService shellExecutionService;
   protected final ShellCommandBuilder shellCommandBuilder;
 

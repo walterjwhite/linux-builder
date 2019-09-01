@@ -5,13 +5,9 @@ import com.walterjwhite.linux.builder.api.model.configuration.CollectionConfigur
 import com.walterjwhite.linux.builder.api.model.configuration.Configurable;
 import com.walterjwhite.linux.builder.api.service.BuildService;
 import com.walterjwhite.linux.builder.impl.service.enumeration.DistributionConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AbstractCollectionModule<Type extends Configurable>
     extends AbstractModule<CollectionConfiguration<Type>> {
-  private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCollectionModule.class);
-
   protected AbstractCollectionModule(
       BuildService buildService,
       final BuildConfiguration buildConfiguration,
@@ -19,14 +15,17 @@ public abstract class AbstractCollectionModule<Type extends Configurable>
     super(buildService, buildConfiguration, distributionConfiguration);
   }
 
-  protected void doRun() {
-    for (Type item : configuration.getItems()) {
-      try {
-        doRun(item);
-      } catch (Exception e) {
-        LOGGER.warn("error running module:", e);
-      }
-    }
+  protected void doRun() throws Exception {
+    configuration
+        .getItems()
+        .forEach(
+            i -> {
+              try {
+                doRun(i);
+              } catch (Exception e) {
+                throw new RuntimeException(e);
+              }
+            });
   }
 
   protected abstract void doRun(Type item) throws Exception;

@@ -1,0 +1,5 @@
+group = 'com.walterjwhite.modules.linux-builder.api'
+description = 'linux-builder - API - model'
+dependencies {
+  compile project(':infrastructure:datastore:api:model')
+}

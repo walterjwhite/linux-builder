@@ -1,11 +1,11 @@
 package com.walterjwhite.linux.builder.impl.service.installation;
 
-import com.walterjwhite.google.guice.property.property.Property;
 import com.walterjwhite.linux.builder.api.model.configuration.BuildConfiguration;
 import com.walterjwhite.linux.builder.api.model.configuration.InstallationConfiguration;
 import com.walterjwhite.linux.builder.api.service.InstallationService;
 import com.walterjwhite.linux.builder.impl.service.GetCurrentRootDeviceTimeout;
 import com.walterjwhite.linux.builder.impl.service.MakeRemoteSystemUpdateDirectoryTimeout;
+import com.walterjwhite.property.impl.annotation.Property;
 import com.walterjwhite.shell.api.model.ShellCommand;
 import com.walterjwhite.shell.api.service.ShellExecutionService;
 import com.walterjwhite.shell.impl.service.ShellCommandBuilder;
@@ -16,14 +16,11 @@ import com.walterjwhite.ssh.api.model.SSHUser;
 import com.walterjwhite.ssh.api.model.command.SSHCommand;
 import com.walterjwhite.ssh.api.model.sftp.SFTPTransfer;
 import java.io.*;
-import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 /**
@@ -33,8 +30,6 @@ import org.yaml.snakeyaml.Yaml;
  * command, don't get a new session ..., 3. ensure the file transfer works the direction you expect
  */
 public class UnixHostInstallationService implements InstallationService {
-  private static final Logger LOGGER = LoggerFactory.getLogger(UnixHostInstallationService.class);
-
   protected final ShellCommandBuilder shellCommandBuilder;
   protected final SSHCommandService sshCommandService;
   protected final SFTPTransferService sftpTransferService;
@@ -82,14 +77,15 @@ public class UnixHostInstallationService implements InstallationService {
       throws FileNotFoundException {
     return (new Yaml()
         .loadAs(
-            new FileInputStream(
-                buildConfiguration.getLocalWorkspace()
-                    + File.separator
-                    + "systems"
-                    + File.separator
-                    + buildConfiguration.getVariant()
-                    + File.separator
-                    + "installation"),
+            new BufferedInputStream(
+                new FileInputStream(
+                    buildConfiguration.getScmConfiguration().getWorkspacePath()
+                        + File.separator
+                        + "systems"
+                        + File.separator
+                        + buildConfiguration.getVariant()
+                        + File.separator
+                        + "installation")),
             InstallationConfiguration.class));
   }
 
@@ -166,10 +162,8 @@ public class UnixHostInstallationService implements InstallationService {
           new SSHCommand(new SSHHost(host), new SSHUser(sshUsername), updateBootloaderCommand);
 
       sshCommandService.execute(updateBootloaderSshCommand);
-    } catch (ConnectException e) {
-      LOGGER.warn("Host must not be up:", e);
     } catch (Exception e) {
-      LOGGER.warn("other error while attempting to setup host", e);
+      throw new RuntimeException("Unable to install on host", e);
     }
   }
 
@@ -229,7 +223,8 @@ public class UnixHostInstallationService implements InstallationService {
 
   public File updateBootloaderConfiguration(
       final File tempFile, final String kernelVersion, final int index) throws IOException {
-    List<String> lines = IOUtils.readLines(new FileInputStream(tempFile), "UTF-8");
+    List<String> lines =
+        IOUtils.readLines(new BufferedInputStream(new FileInputStream(tempFile)), "UTF-8");
 
     int startOfFirstMenuItem = -1;
     boolean start = false;

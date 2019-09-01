@@ -1,18 +1,26 @@
 package com.walterjwhite.linux.builder.impl.service.enumeration;
 
 import com.walterjwhite.linux.builder.api.model.enumeration.Distribution;
-import com.walterjwhite.linux.builder.api.service.DistributionBootstrappingService;
-import com.walterjwhite.linux.builder.api.service.HostnameService;
-import com.walterjwhite.linux.builder.api.service.PackageManagementService;
-import com.walterjwhite.linux.builder.api.service.RunlevelManagementService;
+import com.walterjwhite.linux.builder.api.service.*;
 import com.walterjwhite.linux.builder.impl.service.bootstrap.DebianBootstrappingService;
+import com.walterjwhite.linux.builder.impl.service.bootstrap.FreeBSDBootstrappingService;
 import com.walterjwhite.linux.builder.impl.service.bootstrap.GentooBootstrappingService;
+import com.walterjwhite.linux.builder.impl.service.groupadd.FreeBSDGroupaddService;
+import com.walterjwhite.linux.builder.impl.service.groupadd.LinuxGroupaddService;
+import com.walterjwhite.linux.builder.impl.service.groups.FreeBSDGroupsService;
+import com.walterjwhite.linux.builder.impl.service.groups.LinuxGroupsService;
 import com.walterjwhite.linux.builder.impl.service.hostname.DebianHostnameService;
+import com.walterjwhite.linux.builder.impl.service.hostname.FreeBSDHostnameService;
 import com.walterjwhite.linux.builder.impl.service.hostname.OpenRCHostnameService;
 import com.walterjwhite.linux.builder.impl.service.packagemanagement.AptGetPackageManagementService;
 import com.walterjwhite.linux.builder.impl.service.packagemanagement.EmergePackageManagementService;
+import com.walterjwhite.linux.builder.impl.service.packagemanagement.FreeBSDPackageManagementService;
+import com.walterjwhite.linux.builder.impl.service.packagemanagement.FuntooEmergePackageManagementService;
+import com.walterjwhite.linux.builder.impl.service.runlevel.FreeBSDRunlevelManagementService;
 import com.walterjwhite.linux.builder.impl.service.runlevel.OpenRCRunlevelManagementService;
 import com.walterjwhite.linux.builder.impl.service.runlevel.SystemDRunlevelManagementService;
+import com.walterjwhite.linux.builder.impl.service.useradd.FreeBSDUseraddService;
+import com.walterjwhite.linux.builder.impl.service.useradd.LinuxUseraddService;
 import com.walterjwhite.shell.api.enumeration.VFSType;
 import com.walterjwhite.shell.api.model.MountPoint;
 import org.apache.commons.lang3.ArrayUtils;
@@ -41,20 +49,35 @@ public enum DistributionConfiguration {
       null,
       null,
       null,
-      null),
+      null,
+      LinuxUseraddService.class,
+      LinuxGroupsService.class,
+      LinuxGroupaddService.class),
   Gentoo(
       Distribution.Gentoo,
       Linux,
       new MountPoint[] {
         new MountPoint("/var/cache/portage/distfiles", "~/distfiles", VFSType.BIND),
-        new MountPoint("/var/git", "~/var-git", VFSType.BIND),
-        new MountPoint("/usr/src", "~/src", VFSType.BIND)
+        /*new MountPoint("/usr/src", "~/src", VFSType.BIND)*/
         /*new MountPoint("/var/cache", "none", VFSType.TMPFS)*/ },
       EmergePackageManagementService.class,
       GentooBootstrappingService.class,
       OpenRCRunlevelManagementService.class,
-      OpenRCHostnameService.class),
-  Funtoo(Distribution.Funtoo, Gentoo, new MountPoint[] {}, null, null, null, null),
+      OpenRCHostnameService.class,
+      null,
+      null,
+      null),
+  Funtoo(
+      Distribution.Funtoo,
+      Gentoo,
+      new MountPoint[] {new MountPoint("/var/git", "~/var-git", VFSType.BIND)},
+      FuntooEmergePackageManagementService.class,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null),
 
   Debian(
       Distribution.Debian,
@@ -63,8 +86,23 @@ public enum DistributionConfiguration {
       AptGetPackageManagementService.class,
       DebianBootstrappingService.class,
       SystemDRunlevelManagementService.class,
-      DebianHostnameService.class),
-  Ubuntu(Distribution.Ubuntu, Debian, new MountPoint[] {}, null, null, null, null);
+      DebianHostnameService.class,
+      null,
+      null,
+      null),
+  Ubuntu(
+      Distribution.Ubuntu, Debian, new MountPoint[] {}, null, null, null, null, null, null, null),
+  FreeBSD(
+      Distribution.FreeBSD,
+      null,
+      new MountPoint[] {},
+      FreeBSDPackageManagementService.class,
+      FreeBSDBootstrappingService.class,
+      FreeBSDRunlevelManagementService.class,
+      FreeBSDHostnameService.class,
+      FreeBSDUseraddService.class,
+      FreeBSDGroupsService.class,
+      FreeBSDGroupaddService.class);
 
   private MountPoint[] mountPoints;
   private MountPoint[] umountPoints;
@@ -73,6 +111,9 @@ public enum DistributionConfiguration {
   private Class<? extends DistributionBootstrappingService> bootstrappingServiceClass;
   private Class<? extends RunlevelManagementService> runlevelManagementService;
   private Class<? extends HostnameService> hostnameServiceClass;
+  private Class<? extends UseraddService> useraddServiceClass;
+  private Class<? extends GroupsService> groupsServiceClass;
+  private Class<? extends GroupaddService> groupaddServiceClass;
 
   private DistributionConfiguration parent;
 
@@ -85,7 +126,10 @@ public enum DistributionConfiguration {
       Class<? extends PackageManagementService> packageManagementServiceClass,
       Class<? extends DistributionBootstrappingService> bootstrappingServiceClass,
       Class<? extends RunlevelManagementService> runlevelManagementService,
-      Class<? extends HostnameService> hostnameServiceClass) {
+      Class<? extends HostnameService> hostnameServiceClass,
+      Class<? extends UseraddService> useraddServiceClass,
+      Class<? extends GroupsService> groupsServiceClass,
+      Class<? extends GroupaddService> groupaddServiceClass) {
     this.distribution = distribution;
 
     this.parent = parent;
@@ -99,6 +143,10 @@ public enum DistributionConfiguration {
 
     this.runlevelManagementService = runlevelManagementService;
     this.hostnameServiceClass = hostnameServiceClass;
+
+    this.useraddServiceClass = useraddServiceClass;
+    this.groupsServiceClass = groupsServiceClass;
+    this.groupaddServiceClass = groupaddServiceClass;
   }
 
   public MountPoint[] getMountPoints() {
@@ -165,6 +213,42 @@ public enum DistributionConfiguration {
     }
 
     return (getParent().getImplementingHostnameServiceClass());
+  }
+
+  public Class<? extends UseraddService> getUseraddServiceClass() {
+    return useraddServiceClass;
+  }
+
+  public Class<? extends UseraddService> getImplementingUseraddServiceClass() {
+    if (useraddServiceClass != null) {
+      return (useraddServiceClass);
+    }
+
+    return (getParent().getImplementingUseraddServiceClass());
+  }
+
+  public Class<? extends GroupsService> getGroupsServiceClass() {
+    return groupsServiceClass;
+  }
+
+  public Class<? extends GroupsService> getImplementingGroupsServiceClass() {
+    if (groupsServiceClass != null) {
+      return (groupsServiceClass);
+    }
+
+    return (getParent().getImplementingGroupsServiceClass());
+  }
+
+  public Class<? extends GroupaddService> getGroupaddServiceClass() {
+    return groupaddServiceClass;
+  }
+
+  public Class<? extends GroupaddService> getImplementingGroupaddServiceClass() {
+    if (groupaddServiceClass != null) {
+      return (groupaddServiceClass);
+    }
+
+    return (getParent().getImplementingGroupaddServiceClass());
   }
 
   public static DistributionConfiguration get(final Distribution distribution) {

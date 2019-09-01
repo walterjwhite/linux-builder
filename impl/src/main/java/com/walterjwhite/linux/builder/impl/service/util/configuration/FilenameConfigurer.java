@@ -3,7 +3,6 @@ package com.walterjwhite.linux.builder.impl.service.util.configuration;
 import com.walterjwhite.linux.builder.api.model.configuration.Configurable;
 import com.walterjwhite.linux.builder.api.model.configuration.FilenameConfiguration;
 import java.io.File;
-import java.io.IOException;
 
 public class FilenameConfigurer implements Configurer {
   /**
@@ -11,8 +10,7 @@ public class FilenameConfigurer implements Configurer {
    * Commons IO can copy a directory
    */
   public FilenameConfiguration read(
-      final File path, final Class<? extends Configurable> type, final boolean isCollection)
-      throws IOException {
-    return (new FilenameConfiguration(path.getAbsolutePath()));
+      final File path, final Class<? extends Configurable> type, final boolean isCollection) {
+    return FilenameConfiguration.builder().filename(path.getAbsolutePath()).build();
   }
 }

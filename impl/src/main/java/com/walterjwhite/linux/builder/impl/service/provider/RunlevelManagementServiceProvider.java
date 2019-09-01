@@ -1,6 +1,6 @@
 package com.walterjwhite.linux.builder.impl.service.provider;
 
-import com.walterjwhite.google.guice.GuiceHelper;
+import com.walterjwhite.infrastructure.inject.core.helper.ApplicationHelper;
 import com.walterjwhite.linux.builder.api.service.RunlevelManagementService;
 import com.walterjwhite.linux.builder.impl.service.enumeration.DistributionConfiguration;
 import javax.inject.Inject;
@@ -14,7 +14,8 @@ public class RunlevelManagementServiceProvider implements Provider<RunlevelManag
     super();
 
     this.runlevelManagementService =
-        GuiceHelper.getGuiceInjector()
+        ApplicationHelper.getApplicationInstance()
+            .getInjector()
             .getInstance(distributionConfiguration.getImplementingRunlevelManagementServiceClass());
   }
 

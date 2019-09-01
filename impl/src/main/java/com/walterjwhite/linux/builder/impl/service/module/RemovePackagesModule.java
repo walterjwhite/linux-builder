@@ -8,17 +8,12 @@ import com.walterjwhite.linux.builder.impl.service.annotation.ModuleSupports;
 import com.walterjwhite.linux.builder.impl.service.enumeration.DistributionConfiguration;
 import com.walterjwhite.linux.builder.impl.service.util.configuration.StringConfigurer;
 import javax.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @ModuleSupports(
-  distribution = DistributionConfiguration.Linux,
-  configurer = StringConfigurer.class,
-  configurationClass = StringConfiguration.class
-)
+    distribution = DistributionConfiguration.Linux,
+    configurer = StringConfigurer.class,
+    configurationClass = StringConfiguration.class)
 public class RemovePackagesModule extends AbstractSingleModule<StringConfiguration> {
-  private static final Logger LOGGER = LoggerFactory.getLogger(RemovePackagesModule.class);
-
   protected final PackageManagementService packageManagementService;
 
   @Inject
@@ -34,7 +29,7 @@ public class RemovePackagesModule extends AbstractSingleModule<StringConfigurati
   //  @Override
   //  public void onSetup() {
   //    packageManagementService =
-  //        GuiceHelper.getGuiceInjector()
+  //        GuiceHelper.getGuiceApplicationInjector()
   //
   // .getInstance(distributionConfiguration.getImplementingPackageManagementServiceClass());
   //    packageManagementService.setRootDirectory(buildConfiguration.getRootDirectory());

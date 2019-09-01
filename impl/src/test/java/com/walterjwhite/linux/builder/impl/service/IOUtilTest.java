@@ -3,11 +3,8 @@ package com.walterjwhite.linux.builder.impl.service;
 import com.walterjwhite.linux.builder.impl.service.util.configuration.StringConfigurer;
 import java.io.File;
 import java.io.IOException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class IOUtilTest {
-  private static final Logger LOGGER = LoggerFactory.getLogger(IOUtilTest.class);
 
   public static void main(final String[] arguments) throws IOException {
     StringConfigurer s = new StringConfigurer();

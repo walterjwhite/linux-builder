@@ -2,6 +2,7 @@ package com.walterjwhite.linux.builder.impl.service.packagemanagement;
 
 import com.walterjwhite.linux.builder.api.model.configuration.BuildConfiguration;
 import com.walterjwhite.linux.builder.api.service.PackageManagementService;
+import com.walterjwhite.shell.api.model.CommandOutput;
 import com.walterjwhite.shell.api.model.ShellCommand;
 import com.walterjwhite.shell.api.service.ShellExecutionService;
 import com.walterjwhite.shell.impl.service.ShellCommandBuilder;
@@ -54,7 +55,7 @@ public class EmergePackageManagementService implements PackageManagementService 
   @Override
   public void update() throws Exception {
     run(
-        "ego sync",
+        "emerge-webrsync",
         "emerge --newuse -uD --quiet --quiet-build y --nospinner --color n @world",
         "emerge --quiet --quiet-build y --nospinner --color n --update --newuse --deep --with-bdeps=y @world",
         "emerge --quiet --quiet-build y --nospinner --color n --depclean",
@@ -76,7 +77,16 @@ public class EmergePackageManagementService implements PackageManagementService 
   }
 
   public boolean isInstalled(String packageName) throws Exception {
-    return run("equery l " + packageName).getReturnCode() == 0;
+    final ShellCommand shellCommand = run("emerge -p " + packageName);
+    final Optional<CommandOutput> matchingCommandOutput =
+        shellCommand.getOutputs().stream()
+            .filter(commandOutput -> commandOutput.getOutput().contains(packageName))
+            .findFirst();
+    if (matchingCommandOutput.isPresent()) {
+      return matchingCommandOutput.get().getOutput().contains("ebuild  R");
+    }
+
+    return false;
   }
 
   protected Set<String> getPackagesToUninstall(final String[] packageNames) throws Exception {

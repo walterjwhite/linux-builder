@@ -9,10 +9,9 @@ import com.walterjwhite.linux.builder.impl.service.util.configuration.YamlConfig
 import javax.inject.Inject;
 
 @ModuleSupports(
-  distribution = DistributionConfiguration.Linux,
-  configurer = YamlConfigurer.class,
-  configurationClass = Replace.class
-)
+    distribution = DistributionConfiguration.Linux,
+    configurer = YamlConfigurer.class,
+    configurationClass = Replace.class)
 public class ReplaceModule extends AbstractCollectionModule<Replace> {
   @Inject
   public ReplaceModule(

@@ -11,6 +11,13 @@ public class DefaultSCMTagPatchWriterServiceTest {
         new DefaultSCMTagPatchWriterService("/tmp/linux");
 
     scmTagPatchWriterService.write(
-        new SCMTag("master", "router", new Date(), new Date(), "1234", "abcd1234"));
+        SCMTag.builder()
+            .tag("master")
+            .variant("router")
+            .commitDate(new Date())
+            .buildDate(new Date())
+            .scmVersionId("1234")
+            .commitMessage("abcd1234")
+            .build());
   }
 }

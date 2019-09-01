@@ -1,13 +1,11 @@
 package com.walterjwhite.linux.builder.impl.service.bootstrap;
 
-import com.google.inject.Inject;
 import com.walterjwhite.linux.builder.api.model.BuildPhase;
 import com.walterjwhite.linux.builder.api.model.configuration.BuildConfiguration;
 import com.walterjwhite.linux.builder.api.service.PackageManagementService;
 import com.walterjwhite.shell.api.service.ShellExecutionService;
 import java.io.File;
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
+import javax.inject.Inject;
 import org.apache.commons.io.FileUtils;
 
 /** For the time-being, this is identical to Gentoo ... */
@@ -27,7 +25,7 @@ public class GentooBootstrappingService extends AbstractLinuxBootstrappingServic
   }
 
   @Override
-  public void doBootstrap() throws IOException, InterruptedException, NoSuchAlgorithmException {
+  public void doBootstrap() throws Exception {
     super.doBootstrap();
 
     new File(buildConfiguration.getRootDirectory() + File.separator + "etc/portage/make.conf")

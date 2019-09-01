@@ -12,10 +12,9 @@ import com.walterjwhite.shell.impl.service.ShellCommandBuilder;
 import javax.inject.Inject;
 
 @ModuleSupports(
-  distribution = DistributionConfiguration.Gentoo,
-  configurer = ListConfigurer.class,
-  configurationClass = StringConfiguration.class
-)
+    distribution = DistributionConfiguration.Gentoo,
+    configurer = ListConfigurer.class,
+    configurationClass = StringConfiguration.class)
 public class EproArchModule extends AbstractEproModule {
   @Inject
   public EproArchModule(

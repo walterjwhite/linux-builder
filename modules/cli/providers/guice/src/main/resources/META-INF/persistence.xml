@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd" version="2.0">
+  <persistence-unit name="Primary">
+    <class>com.walterjwhite.datastore.api.model.entity.EntityReference</class>
+    <class>com.walterjwhite.datastore.api.model.entity.EntityType</class>
+    <class>com.walterjwhite.datastore.api.model.entity.MaterializedView</class>
+    <class>com.walterjwhite.datastore.api.model.entity.Tag</class>
+    <class>com.walterjwhite.datastore.api.model.entity.Tenant</class>
+    <class>com.walterjwhite.download.api.model.Download</class>
+    <class>com.walterjwhite.file.api.model.File</class>
+    <class>com.walterjwhite.file.api.model.RetentionPolicy</class>
+    <class>com.walterjwhite.shell.api.model.BatteryRequest</class>
+    <class>com.walterjwhite.shell.api.model.BatteryStatus</class>
+    <class>com.walterjwhite.shell.api.model.BindAddress</class>
+    <class>com.walterjwhite.shell.api.model.BindAddressState</class>
+    <class>com.walterjwhite.shell.api.model.ChrootShellCommand</class>
+    <class>com.walterjwhite.shell.api.model.CommandError</class>
+    <class>com.walterjwhite.shell.api.model.CommandOutput</class>
+    <class>com.walterjwhite.shell.api.model.FreeBSDJailShellCommand</class>
+    <class>com.walterjwhite.shell.api.model.IPAddress</class>
+    <class>com.walterjwhite.shell.api.model.IPAddressState</class>
+    <class>com.walterjwhite.shell.api.model.MountCommand</class>
+    <class>com.walterjwhite.shell.api.model.MountCommandShellCommand</class>
+    <class>com.walterjwhite.shell.api.model.MountPoint</class>
+    <class>com.walterjwhite.shell.api.model.NetworkDiagnosticTest</class>
+    <class>com.walterjwhite.shell.api.model.NetworkInterface</class>
+    <class>com.walterjwhite.shell.api.model.NetworkInterfaceState</class>
+    <class>com.walterjwhite.shell.api.model.Node</class>
+    <class>com.walterjwhite.shell.api.model.Service</class>
+    <class>com.walterjwhite.shell.api.model.ServiceCommand</class>
+    <class>com.walterjwhite.shell.api.model.ServiceStatus</class>
+    <class>com.walterjwhite.shell.api.model.ShellCommand</class>
+    <class>com.walterjwhite.shell.api.model.ShellCommandEnvironmentProperty</class>
+    <class>com.walterjwhite.shell.api.model.dig.DigRequest</class>
+    <class>com.walterjwhite.shell.api.model.dig.DigRequestIPAddress</class>
+    <class>com.walterjwhite.shell.api.model.ping.PingRequest</class>
+    <class>com.walterjwhite.shell.api.model.ping.PingResponse</class>
+    <class>com.walterjwhite.shell.api.model.traceroute.TracerouteHop</class>
+    <class>com.walterjwhite.shell.api.model.traceroute.TracerouteRequest</class>
+    <class>com.walterjwhite.shell.api.model.traceroute.TracrouteHopResponse</class>
+    <class>com.walterjwhite.ssh.api.model.SSHHost</class>
+    <class>com.walterjwhite.ssh.api.model.SSHUser</class>
+    <class>com.walterjwhite.ssh.api.model.command.SSHCommand</class>
+    <class>com.walterjwhite.ssh.api.model.command.SSHExpectCommand</class>
+    <class>com.walterjwhite.ssh.api.model.sftp.SFTPTransfer</class>
+    <!-- not processed in Java SE -->
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <properties>
+      <property name="hibernate.hbm2ddl.auto" value="update"/>
+      <property name="hibernate.connection.driver_class" value="com.p6spy.engine.spy.P6SpyDriver"/>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+      <property name="hibernate.connection.url" value="jdbc:p6spy:h2:${DATABASE_FILE};DB_CLOSE_ON_EXIT=FALSE"/>
+      <!-- OS env property also did not affect this -->
+      <!--<property name="hibernate.connection.url" value="jdbc:p6spy:h2:./db/${DatabaseName}"/>-->
+      <!-- Postgres 10 -->
+      <!--
+            <property name="hibernate.connection.url" value="jdbc:p6spy:postgresql://localhost/remote?user=remote"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL9Dialect"/>
+            -->
+      <property name="hibernate.connection.provider_class" value="org.hibernate.hikaricp.internal.HikariCPConnectionProvider"/>
+      <property name="org.hibernate.flushMode" value="COMMIT"/>
+    </properties>
+  </persistence-unit>
+</persistence>

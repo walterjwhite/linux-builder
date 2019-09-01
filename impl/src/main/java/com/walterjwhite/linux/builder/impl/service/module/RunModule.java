@@ -13,10 +13,9 @@ import javax.inject.Inject;
 import org.apache.commons.io.FileUtils;
 
 @ModuleSupports(
-  distribution = DistributionConfiguration.Linux,
-  configurer = FilenameConfigurer.class,
-  configurationClass = FilenameConfiguration.class
-)
+    distribution = DistributionConfiguration.Linux,
+    configurer = FilenameConfigurer.class,
+    configurationClass = FilenameConfiguration.class)
 public class RunModule extends AbstractSingleModule<FilenameConfiguration> {
   protected final ShellExecutionService shellExecutionService;
   protected final ShellCommandBuilder shellCommandBuilder;

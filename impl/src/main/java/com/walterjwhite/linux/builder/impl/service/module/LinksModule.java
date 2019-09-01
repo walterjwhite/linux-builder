@@ -12,10 +12,9 @@ import java.io.File;
 import javax.inject.Inject;
 
 @ModuleSupports(
-  distribution = DistributionConfiguration.Linux,
-  configurer = YamlConfigurer.class,
-  configurationClass = Link.class
-)
+    distribution = DistributionConfiguration.Linux,
+    configurer = YamlConfigurer.class,
+    configurationClass = Link.class)
 public class LinksModule extends AbstractCollectionModule<Link> {
   protected final ShellExecutionService shellExecutionService;
   protected final ShellCommandBuilder shellCommandBuilder;

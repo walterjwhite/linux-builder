@@ -10,18 +10,13 @@ import com.walterjwhite.logging.annotation.ContextualLoggable;
 import java.io.File;
 import javax.inject.Inject;
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @ContextualLoggable
 @ModuleSupports(
-  distribution = DistributionConfiguration.Linux,
-  configurer = YamlConfigurer.class,
-  configurationClass = ExternalFile.class
-)
+    distribution = DistributionConfiguration.Linux,
+    configurer = YamlConfigurer.class,
+    configurationClass = ExternalFile.class)
 public class CopyExternalFilesModule extends AbstractCollectionModule<ExternalFile> {
-  private static final Logger LOGGER = LoggerFactory.getLogger(CopyExternalFilesModule.class);
-
   @Inject
   public CopyExternalFilesModule(
       BuildService buildService,
@@ -36,7 +31,14 @@ public class CopyExternalFilesModule extends AbstractCollectionModule<ExternalFi
   @Override
   protected void doRun(ExternalFile item) throws Exception {
     // copy source to the target
-    FileUtils.copyFile(getSource(item), getTarget(item));
+    final File source = getSource(item);
+    final File target = getTarget(item);
+
+    if (source.isDirectory()) {
+      FileUtils.copyDirectory(source, target);
+    } else {
+      FileUtils.copyFile(source, target);
+    }
   }
 
   protected File getSource(ExternalFile item) {

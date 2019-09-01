@@ -2,11 +2,8 @@ package com.walterjwhite.linux.builder.impl.service;
 
 import com.walterjwhite.linux.builder.impl.service.util.configuration.YamlConfigurer;
 import java.io.IOException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class YamlConfigurerTest {
-  private static final Logger LOGGER = LoggerFactory.getLogger(YamlConfigurerTest.class);
 
   public static void main(final String[] arguments) throws IOException {
 

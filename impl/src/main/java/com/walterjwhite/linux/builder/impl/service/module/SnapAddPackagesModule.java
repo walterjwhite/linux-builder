@@ -8,17 +8,12 @@ import com.walterjwhite.linux.builder.impl.service.enumeration.DistributionConfi
 import com.walterjwhite.linux.builder.impl.service.packagemanagement.SnapPackageManagementService;
 import com.walterjwhite.linux.builder.impl.service.util.configuration.StringConfigurer;
 import javax.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @ModuleSupports(
-  distribution = DistributionConfiguration.Linux,
-  configurer = StringConfigurer.class,
-  configurationClass = StringConfiguration.class
-)
+    distribution = DistributionConfiguration.Linux,
+    configurer = StringConfigurer.class,
+    configurationClass = StringConfiguration.class)
 public class SnapAddPackagesModule extends AbstractSingleModule<StringConfiguration> {
-  private static final Logger LOGGER = LoggerFactory.getLogger(SnapAddPackagesModule.class);
-
   protected final SnapPackageManagementService snapPackageManagementService;
 
   @Inject

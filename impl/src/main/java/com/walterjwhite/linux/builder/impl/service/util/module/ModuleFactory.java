@@ -1,7 +1,6 @@
 package com.walterjwhite.linux.builder.impl.service.util.module;
 
-import com.google.inject.Inject;
-import com.walterjwhite.google.guice.GuiceHelper;
+import com.walterjwhite.infrastructure.inject.core.helper.ApplicationHelper;
 import com.walterjwhite.linux.builder.api.model.BuildPhase;
 import com.walterjwhite.linux.builder.api.model.configuration.BuildConfiguration;
 import com.walterjwhite.linux.builder.api.model.configuration.Configurable;
@@ -20,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import org.reflections.Reflections;
 
 public class ModuleFactory {
@@ -27,13 +27,17 @@ public class ModuleFactory {
   protected final DistributionConfiguration distributionConfiguration;
   protected final Set<Class<? extends Module>> allClasses;
   protected final Map<String, Class<? extends Module>> extensionToClassMapping;
+  protected final Reflections reflections;
 
   @Inject
   public ModuleFactory(
-      BuildConfiguration buildConfiguration, DistributionConfiguration distributionConfiguration) {
+      BuildConfiguration buildConfiguration,
+      DistributionConfiguration distributionConfiguration,
+      Reflections reflections) {
     super();
     this.buildConfiguration = buildConfiguration;
     this.distributionConfiguration = distributionConfiguration;
+    this.reflections = reflections;
     allClasses = new HashSet<>();
     extensionToClassMapping = new HashMap<>();
     onSetup();
@@ -42,7 +46,8 @@ public class ModuleFactory {
 
   @PostConstruct
   protected void onSetup() {
-    Reflections reflections = new Reflections("com.walterjwhite.linux.builder.impl.service.module");
+    // Reflections reflections = new
+    // Reflections("com.walterjwhite.linux.builder.impl.service.module");
     allClasses.addAll(reflections.getSubTypesOf(Module.class));
   }
 
@@ -124,7 +129,8 @@ public class ModuleFactory {
     final Configurable configuration = ConfigurationUtil.read(moduleConfigurationFile, beanClass);
 
     final AbstractModule instance =
-        (AbstractModule) GuiceHelper.getGuiceInjector().getInstance(beanClass);
+        (AbstractModule)
+            ApplicationHelper.getApplicationInstance().getInjector().getInstance(beanClass);
     instance.setPatchName(patchName);
     instance.setFilename(moduleConfigurationFile.getAbsolutePath());
     instance.setConfiguration(configuration);
@@ -137,21 +143,15 @@ public class ModuleFactory {
 
   // Determines the Module Class from the configuration file and extension.
   private Class getModuleClass(final File moduleConfigurationFile) throws ClassNotFoundException {
-    return (extensionToClassMapping.get(getFileExtension(moduleConfigurationFile)));
+    final Class moduleClass =
+        extensionToClassMapping.get(getFileExtension(moduleConfigurationFile));
+    if (moduleClass == null)
+      throw new IllegalArgumentException(
+          "No module class found for: "
+              + moduleConfigurationFile
+              + ", check the spelling of the extension");
 
-    // legacy code below
-    /*
-    final String moduleExtension = getModuleExtension(moduleConfigurationFile) + "Module";
-
-    for (final Class<? extends Module> moduleClass : allClasses) {
-      if (moduleClass.getSimpleName().equalsIgnoreCase(moduleExtension)) {
-        return (moduleClass);
-      }
-    }
-
-    throw (new ClassNotFoundException(
-        "Unsupported file extension:" + moduleExtension + " no module mapped to that extension."));
-    */
+    return moduleClass;
   }
 
   // Gets the extension for the given configuration file.

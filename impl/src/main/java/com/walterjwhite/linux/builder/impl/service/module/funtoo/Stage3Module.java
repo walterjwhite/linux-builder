@@ -4,6 +4,7 @@ import com.walterjwhite.download.api.model.Download;
 import com.walterjwhite.download.api.service.DownloadService;
 import com.walterjwhite.linux.builder.api.model.configuration.BuildConfiguration;
 import com.walterjwhite.linux.builder.api.model.configuration.Stage3Configuration;
+import com.walterjwhite.linux.builder.api.model.enumeration.InstructionSet;
 import com.walterjwhite.linux.builder.api.service.BuildService;
 import com.walterjwhite.linux.builder.impl.service.annotation.ModuleSupports;
 import com.walterjwhite.linux.builder.impl.service.enumeration.DistributionConfiguration;
@@ -19,10 +20,9 @@ import javax.inject.Inject;
 import org.apache.commons.io.FileUtils;
 
 @ModuleSupports(
-  distribution = DistributionConfiguration.Gentoo,
-  configurer = YamlConfigurer.class,
-  configurationClass = Stage3Configuration.class
-)
+    distribution = DistributionConfiguration.Gentoo,
+    configurer = YamlConfigurer.class,
+    configurationClass = Stage3Configuration.class)
 public class Stage3Module extends AbstractSingleModule<Stage3Configuration> {
   protected String stage3Uri;
   protected String stage3ChecksumUri;
@@ -72,9 +72,8 @@ public class Stage3Module extends AbstractSingleModule<Stage3Configuration> {
     if (isChrootEnvironmentSetup()) return false;
 
     // ensure we use the latest stage3
-    final File checksumFile = downloadService.download(new Download(stage3ChecksumUri, null));
-    final File stage3File =
-        downloadService.download(new Download(stage3ChecksumUri, null), checksumFile);
+    final File checksumFile = downloadService.download(new Download(stage3ChecksumUri));
+    final File stage3File = downloadService.download(new Download(stage3Uri), checksumFile);
 
     extractStage3File(stage3File);
     removeVarGit();
@@ -138,10 +137,16 @@ public class Stage3Module extends AbstractSingleModule<Stage3Configuration> {
     PortageUtil.append(buffer, "http_proxy", System.getenv("http_proxy"));
     buffer.append("\n");
 
-    PortageUtil.append(buffer, "CHOST", configuration.getSubArchitecture().getChost());
+    PortageUtil.append(
+        buffer, "CHOST", configuration.getSubArchitecture().getPlatform().getGccHost());
     PortageUtil.append(buffer, "CFLAGS", configuration.getSubArchitecture().getCflags());
-    PortageUtil.append(buffer, "CXXFLAGS", configuration.getSubArchitecture().getCflags());
-    PortageUtil.append(buffer, "CPU_FLAGS_X86", configuration.getSubArchitecture().getCpuFlags());
+    PortageUtil.append(
+        buffer, "CXXFLAGS", /*configuration.getSubArchitecture().getCflags()*/ "${CFLAGS}");
+
+    PortageUtil.append(
+        buffer,
+        "CPU_FLAGS_X86",
+        InstructionSet.getCpuFlags(configuration.getSubArchitecture().getInstructionSets()));
     PortageUtil.append(buffer, "MAKEOPTS", getMakeOpts());
 
     if (configuration.getMirrors() != null)

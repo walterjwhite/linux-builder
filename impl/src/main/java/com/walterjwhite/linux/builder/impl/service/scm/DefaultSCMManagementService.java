@@ -1,8 +1,7 @@
 package com.walterjwhite.linux.builder.impl.service.scm;
 
 import com.walterjwhite.linux.builder.api.model.configuration.BuildConfiguration;
-import com.walterjwhite.linux.builder.api.service.SCMManagementService;
-import com.walterjwhite.linux.builder.api.service.SCMService;
+import com.walterjwhite.scm.api.SCMService;
 import java.io.File;
 import java.io.IOException;
 import javax.inject.Inject;
@@ -22,21 +21,28 @@ public class DefaultSCMManagementService implements SCMManagementService {
   @Override
   public void prepare() throws Exception {
     prepareLocalWorkspace();
-    scmService.checkout(buildConfiguration);
-    new DefaultSCMTagPatchWriterService(buildConfiguration.getLocalWorkspace())
-        .write(scmService.getSCMTag(buildConfiguration));
+    scmService.checkout(buildConfiguration.getScmConfiguration());
+
+    new DefaultSCMTagPatchWriterService(buildConfiguration.getScmConfiguration().getWorkspacePath())
+        .write(
+            buildConfiguration,
+            buildConfiguration
+                .getScmConfiguration()
+                .getTag() /*scmService.getSCMTag(buildConfiguration.getScmConfiguration())*/);
   }
 
   protected void prepareLocalWorkspace() throws IOException {
-    buildConfiguration.setLocalWorkspace(
-        buildConfiguration.getBuildDirectory()
-            + File.separator
-            + "linux-"
-            + buildConfiguration.getTag()
-            + "-"
-            + buildConfiguration.getVariant());
+    // TODO: set in build configuration provider
+    //    buildConfiguration.setLocalWorkspace(
+    //        buildConfiguration.getBuildDirectory()
+    //            + File.separator
+    //            + "linux-"
+    //            + buildConfiguration.getTag()
+    //            + "-"
+    //            + buildConfiguration.getVariant());
 
-    final File localRepositoryFile = new File(buildConfiguration.getLocalWorkspace());
+    final File localRepositoryFile =
+        new File(buildConfiguration.getScmConfiguration().getWorkspacePath());
     if (localRepositoryFile.exists()) {
       FileUtils.deleteDirectory(localRepositoryFile);
     }

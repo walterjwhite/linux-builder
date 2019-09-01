@@ -3,3 +3,8 @@ TODO:
    a. documentation - generated automatically from git repository patches and installed in image for review
    b. ubuntu / debian / fedora support needs tested / fixed
    c. prepare base image / example of how this works (with funtoo)
+
+2. auto detect distribution / better parameterization
+3. validate crontab
+4. systemctl - fix syntax for specifying the specific target runlevel
+5. pip virtualenv setup - not working

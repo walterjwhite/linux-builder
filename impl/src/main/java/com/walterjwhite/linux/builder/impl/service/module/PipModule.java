@@ -12,6 +12,7 @@ import com.walterjwhite.linux.builder.impl.service.util.configuration.StringConf
 import com.walterjwhite.logging.annotation.ContextualLoggable;
 import com.walterjwhite.shell.api.service.ShellExecutionService;
 import com.walterjwhite.shell.impl.service.ShellCommandBuilder;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -21,10 +22,9 @@ import org.yaml.snakeyaml.Yaml;
 
 @ContextualLoggable
 @ModuleSupports(
-  distribution = DistributionConfiguration.Linux,
-  configurer = StringConfigurer.class,
-  configurationClass = StringConfiguration.class
-)
+    distribution = DistributionConfiguration.Linux,
+    configurer = StringConfigurer.class,
+    configurationClass = StringConfiguration.class)
 public class PipModule extends AbstractSingleModule<StringConfiguration> {
   protected final PipConfiguration pipConfiguration;
   protected final ShellExecutionService shellExecutionService;
@@ -45,10 +45,11 @@ public class PipModule extends AbstractSingleModule<StringConfiguration> {
     pipConfiguration =
         new Yaml()
             .loadAs(
-                new FileInputStream(
-                    buildConfiguration.getLocalWorkspace()
-                        + File.separator
-                        + "systems/base/pip.patch/configuration.yaml"),
+                new BufferedInputStream(
+                    new FileInputStream(
+                        buildConfiguration.getScmConfiguration().getWorkspacePath()
+                            + File.separator
+                            + "systems/base/pip.patch/configuration.yaml")),
                 PipConfiguration.class);
     this.shellCommandBuilder = shellCommandBuilder;
   }
@@ -89,7 +90,9 @@ public class PipModule extends AbstractSingleModule<StringConfiguration> {
     buildService.runPatch(
         new Patch(
             "system-pip",
-            buildConfiguration.getLocalWorkspace() + File.separator + "systems/base/pip.patch",
+            buildConfiguration.getScmConfiguration().getWorkspacePath()
+                + File.separator
+                + "systems/base/pip.patch",
             false),
         BuildPhase.Setup);
   }

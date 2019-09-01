@@ -2,7 +2,7 @@ package com.walterjwhite.linux.builder.impl.service.module;
 
 import com.walterjwhite.download.api.model.Download;
 import com.walterjwhite.download.api.service.DownloadService;
-import com.walterjwhite.encryption.api.service.DigestService;
+import com.walterjwhite.encryption.service.DigestService;
 import com.walterjwhite.linux.builder.api.model.configuration.BuildConfiguration;
 import com.walterjwhite.linux.builder.api.model.configuration.DebootstrapConfiguration;
 import com.walterjwhite.linux.builder.api.service.BuildService;
@@ -13,17 +13,12 @@ import com.walterjwhite.shell.api.service.MountService;
 import com.walterjwhite.shell.api.service.ShellExecutionService;
 import com.walterjwhite.shell.impl.service.ShellCommandBuilder;
 import javax.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @ModuleSupports(
-  distribution = DistributionConfiguration.Debian,
-  configurer = YamlConfigurer.class,
-  configurationClass = DebootstrapConfiguration.class
-)
+    distribution = DistributionConfiguration.Debian,
+    configurer = YamlConfigurer.class,
+    configurationClass = DebootstrapConfiguration.class)
 public class DebootstrapModule extends AbstractSingleModule<DebootstrapConfiguration> {
-  private static final Logger LOGGER = LoggerFactory.getLogger(DebootstrapModule.class);
-
   protected final ShellCommandBuilder shellCommandBuilder;
   protected final DigestService digestService;
   protected final MountService mountService;

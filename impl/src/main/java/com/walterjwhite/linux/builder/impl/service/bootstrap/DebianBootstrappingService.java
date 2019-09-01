@@ -1,10 +1,10 @@
 package com.walterjwhite.linux.builder.impl.service.bootstrap;
 
-import com.google.inject.Inject;
 import com.walterjwhite.linux.builder.api.model.BuildPhase;
 import com.walterjwhite.linux.builder.api.model.configuration.BuildConfiguration;
 import com.walterjwhite.linux.builder.api.service.PackageManagementService;
 import com.walterjwhite.shell.api.service.ShellExecutionService;
+import javax.inject.Inject;
 
 public class DebianBootstrappingService extends AbstractLinuxBootstrappingService {
   protected final ShellExecutionService shellExecutionService;

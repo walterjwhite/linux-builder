@@ -6,18 +6,14 @@ import org.junit.Test;
 
 public class PipeTest {
   @Test
-  public void testPipe() {
-    try {
-      String line;
-      String[] cmd = {"/bin/sh", "-c", "tar cp -C /tmp/source . | tar xp -C /tmp/target"};
-      Process p = Runtime.getRuntime().exec(cmd);
-      BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
-      while ((line = in.readLine()) != null) {
-        System.out.println(line);
-      }
-      in.close();
-    } catch (Exception ex) {
-      ex.printStackTrace();
+  public void testPipe() throws Exception {
+    String line;
+    String[] cmd = {"/bin/sh", "-c", "tar cp -C /tmp/source . | tar xp -C /tmp/target"};
+    Process p = Runtime.getRuntime().exec(cmd);
+    BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
+    while ((line = in.readLine()) != null) {
+      System.out.println(line);
     }
+    in.close();
   }
 }

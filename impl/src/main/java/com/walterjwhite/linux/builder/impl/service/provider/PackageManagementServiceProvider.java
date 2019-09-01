@@ -1,6 +1,6 @@
 package com.walterjwhite.linux.builder.impl.service.provider;
 
-import com.walterjwhite.google.guice.GuiceHelper;
+import com.walterjwhite.infrastructure.inject.core.helper.ApplicationHelper;
 import com.walterjwhite.linux.builder.api.service.PackageManagementService;
 import com.walterjwhite.linux.builder.impl.service.enumeration.DistributionConfiguration;
 import javax.inject.Inject;
@@ -13,7 +13,8 @@ public class PackageManagementServiceProvider implements Provider<PackageManagem
   public PackageManagementServiceProvider(DistributionConfiguration distributionConfiguration) {
     super();
     this.packageManagementService =
-        GuiceHelper.getGuiceInjector()
+        ApplicationHelper.getApplicationInstance()
+            .getInjector()
             .getInstance(distributionConfiguration.getImplementingPackageManagementServiceClass());
   }
 

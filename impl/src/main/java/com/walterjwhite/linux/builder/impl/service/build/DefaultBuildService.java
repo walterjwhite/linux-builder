@@ -1,6 +1,8 @@
 package com.walterjwhite.linux.builder.impl.service.build;
 
 import com.google.common.eventbus.EventBus;
+import com.walterjwhite.interruptable.Interruptable;
+import com.walterjwhite.interruptable.annotation.InterruptableService;
 import com.walterjwhite.linux.builder.api.model.BuildPhase;
 import com.walterjwhite.linux.builder.api.model.configuration.BuildConfiguration;
 import com.walterjwhite.linux.builder.api.model.patch.Patch;
@@ -18,13 +20,10 @@ import java.io.File;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Singleton
-public class DefaultBuildService implements BuildService {
-  private static final Logger LOGGER = LoggerFactory.getLogger(DefaultBuildService.class);
-
+@InterruptableService
+public class DefaultBuildService implements BuildService, Interruptable {
   protected final ModuleFactory moduleFactory;
 
   protected final EventBus eventBus;
@@ -60,20 +59,14 @@ public class DefaultBuildService implements BuildService {
   protected void onSetup() throws IllegalAccessException, InstantiationException {
     System.setProperty("~/", buildConfiguration.getBuildDirectory());
 
-    //    bootstrappingService =
-    //        GuiceHelper.getGuiceInjector()
-    //
-    // .getInstance(distributionConfiguration.getImplementingBootstrappingServiceClass());
-    //    bootstrappingService.onSetup(buildConfiguration);
+    //    DistributionBootstrappingService bootstrappingService =
+    // ApplicationHelper.getApplicationInstance().getInjector().getInstance(distributionConfiguration.getImplementingBootstrappingServiceClass());
+    //        bootstrappingService.onSetup(buildConfiguration);
   }
 
-  public void onShutdown() {
-    try {
-      // TODO: kill all running processes, especially shell execution
-      unmount();
-    } catch (Exception e) {
-      LOGGER.error("error unmount:", e);
-    }
+  public void onShutdown() throws Exception {
+    // TODO: kill all running processes, especially shell execution
+    unmount();
   }
 
   @Override
@@ -81,8 +74,7 @@ public class DefaultBuildService implements BuildService {
     onSetup();
 
     // single patch
-    if (buildConfiguration.getSinglePatchName() != null
-        && !buildConfiguration.getSinglePatchName().isEmpty()) {
+    if (buildConfiguration.getSinglePatchName() != null) {
       doSinglePatch();
     } else {
       doAllPatches();
@@ -112,7 +104,6 @@ public class DefaultBuildService implements BuildService {
       mount();
       doPatches();
     } finally {
-      unmount();
       onShutdown();
     }
   }
@@ -121,7 +112,7 @@ public class DefaultBuildService implements BuildService {
     runPatch(
         new Patch(
             "system",
-            buildConfiguration.getLocalWorkspace()
+            buildConfiguration.getScmConfiguration().getWorkspacePath()
                 + File.separator
                 + "systems"
                 + File.separator
@@ -135,14 +126,17 @@ public class DefaultBuildService implements BuildService {
   protected void doPatch(final String patchName) throws Exception {
     Patch patch =
         DependencyManagementUtil.getPatchByName(
-            buildConfiguration.getLocalWorkspace(), buildConfiguration.getVariant(), patchName);
+            buildConfiguration.getScmConfiguration().getWorkspacePath(),
+            buildConfiguration.getVariant(),
+            patchName);
     doPatches(patch);
   }
 
   protected void doPatches() throws Exception {
     final List<Patch> patches =
         DependencyManagementUtil.getOrderedSystemPatches(
-            buildConfiguration.getLocalWorkspace(), buildConfiguration.getVariant());
+            buildConfiguration.getScmConfiguration().getWorkspacePath(),
+            buildConfiguration.getVariant());
 
     doPatches(patches.toArray(new Patch[patches.size()]));
   }
@@ -213,7 +207,6 @@ public class DefaultBuildService implements BuildService {
       final String rootDirectory,
       final DistributionConfiguration distributionConfiguration)
       throws Exception {
-    // TODO: persist these values so we work with actual db entities
     for (final MountPoint mountPoint : distributionConfiguration.getMountPoints())
       mountService.execute(
           new MountCommand()
@@ -249,6 +242,15 @@ public class DefaultBuildService implements BuildService {
 
     if (distributionConfiguration.getParent() != null) {
       unmount(/*applicationEventPublisher,*/ rootDirectory, distributionConfiguration.getParent());
+    }
+  }
+
+  @Override
+  public void interrupt() {
+    try {
+      unmount();
+    } catch (Exception e) {
+      throw new RuntimeException("Error unmounting", e);
     }
   }
 }

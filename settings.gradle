@@ -1,0 +1,14 @@
+rootProject.name = 'linux-builder'
+include ':api:model'
+include ':api:service'
+include ':api'
+include ':impl'
+include ':modules:cli'
+include ':modules'
+
+project(':api:model').projectDir = "$rootDir/api/model" as File
+project(':api:service').projectDir = "$rootDir/api/service" as File
+project(':api').projectDir = "$rootDir/api" as File
+project(':impl').projectDir = "$rootDir/impl" as File
+project(':modules:cli').projectDir = "$rootDir/modules/cli" as File
+project(':modules').projectDir = "$rootDir/modules" as File

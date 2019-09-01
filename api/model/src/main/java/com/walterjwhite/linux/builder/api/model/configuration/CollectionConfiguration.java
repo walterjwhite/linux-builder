@@ -1,31 +1,17 @@
 package com.walterjwhite.linux.builder.api.model.configuration;
 
-import java.util.LinkedHashSet;
+import java.util.HashSet;
+import java.util.Set;
+import lombok.Data;
+import lombok.ToString;
 
+@Data
+@ToString(doNotUseGetters = true)
 public class CollectionConfiguration<Type extends Configurable> implements Configurable {
-  protected LinkedHashSet<Type> items;
-
-  public CollectionConfiguration(LinkedHashSet<Type> items) {
-    this();
-    this.items.addAll(items);
-  }
-
-  public CollectionConfiguration() {
-    super();
-
-    items = new LinkedHashSet<>();
-  }
-
-  public LinkedHashSet<Type> getItems() {
-    return items;
-  }
-
-  public void setItems(LinkedHashSet<Type> items) {
-    this.items = items;
-  }
+  protected Set<Type> items = new HashSet<>();
 
   public boolean isRun() {
-    if (items == null || items.size() == 0) {
+    if (items == null || items.isEmpty()) {
       return (false);
     }
 

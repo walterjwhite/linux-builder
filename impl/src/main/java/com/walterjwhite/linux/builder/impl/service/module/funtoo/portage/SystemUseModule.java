@@ -14,10 +14,9 @@ import javax.inject.Inject;
 import org.apache.commons.io.FileUtils;
 
 @ModuleSupports(
-  distribution = DistributionConfiguration.Gentoo,
-  configurer = YamlConfigurer.class,
-  configurationClass = SystemUseConfiguration.class
-)
+    distribution = DistributionConfiguration.Gentoo,
+    configurer = YamlConfigurer.class,
+    configurationClass = SystemUseConfiguration.class)
 public class SystemUseModule extends AbstractSingleModule<SystemUseConfiguration> {
   @Inject
   public SystemUseModule(

@@ -15,19 +15,14 @@ import javax.inject.Inject;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 // TODO: 1. this is dependent upon jbrowser driver, instead use remote cli driver 2. remote cli
 // driver has proxy issues 3. jbrowser driver has classpath issues ...
 @ModuleSupports(
-  distribution = DistributionConfiguration.Linux,
-  configurer = YamlConfigurer.class,
-  configurationClass = WebDriverRequest.class
-)
+    distribution = DistributionConfiguration.Linux,
+    configurer = YamlConfigurer.class,
+    configurationClass = WebDriverRequest.class)
 public class WebDriverRequestModule extends AbstractCollectionModule<WebDriverRequest> {
-  private static final Logger LOGGER = LoggerFactory.getLogger(WebDriverRequestModule.class);
-
   // protected final WebDriver webDriver;
   protected final JBrowserDriver webDriver;
   protected WebElement webElement;
@@ -99,9 +94,6 @@ public class WebDriverRequestModule extends AbstractCollectionModule<WebDriverRe
       if (webElement == null) {
         throw (new IllegalStateException("cli element is null"));
       }
-
-      LOGGER.debug("cli element:" + webElement);
-      LOGGER.debug("is displayed:" + webElement.isDisplayed());
 
       webElement.click();
     } else if (WebDriverAction.SaveAttachment.equals(webDriverRequest.getAction())) {

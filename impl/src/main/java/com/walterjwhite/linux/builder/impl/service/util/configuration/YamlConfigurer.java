@@ -2,10 +2,7 @@ package com.walterjwhite.linux.builder.impl.service.util.configuration;
 
 import com.walterjwhite.linux.builder.api.model.configuration.CollectionConfiguration;
 import com.walterjwhite.linux.builder.api.model.configuration.Configurable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import org.yaml.snakeyaml.Yaml;
 
 public class YamlConfigurer implements Configurer {
@@ -27,23 +24,23 @@ public class YamlConfigurer implements Configurer {
 
   protected CollectionConfiguration loadAll(final File path, Class<? extends Configurable> type)
       throws FileNotFoundException {
-    final CollectionConfiguration collection = new CollectionConfiguration();
+    final CollectionConfiguration collectionConfiguration = new CollectionConfiguration();
 
     for (final File child : path.listFiles()) {
-      loadItem(collection, child, type);
+      loadItem(collectionConfiguration, child, type);
     }
 
-    return (collection);
+    return (collectionConfiguration);
   }
 
   protected Configurable loadItem(
-      final CollectionConfiguration collection,
+      final CollectionConfiguration collectionConfiguration,
       final File child,
       Class<? extends Configurable> type)
       throws FileNotFoundException {
     final Configurable childElement = load(child, type);
     if (childElement != null) {
-      collection.getItems().add(childElement);
+      collectionConfiguration.getItems().add(childElement);
       return (childElement);
     }
 
@@ -52,6 +49,6 @@ public class YamlConfigurer implements Configurer {
 
   protected Configurable load(final File path, Class<? extends Configurable> type)
       throws FileNotFoundException {
-    return (yaml.loadAs(new FileInputStream(path), type));
+    return (yaml.loadAs(new BufferedInputStream(new FileInputStream(path)), type));
   }
 }

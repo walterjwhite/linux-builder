@@ -10,10 +10,9 @@ import com.walterjwhite.linux.builder.impl.service.util.configuration.YamlConfig
 import javax.inject.Inject;
 
 @ModuleSupports(
-  distribution = DistributionConfiguration.Linux,
-  configurer = YamlConfigurer.class,
-  configurationClass = DownloadConfiguration.class
-)
+    distribution = DistributionConfiguration.Linux,
+    configurer = YamlConfigurer.class,
+    configurationClass = DownloadConfiguration.class)
 public class DownloadsModule extends AbstractCollectionModule<DownloadConfiguration> {
   protected final DownloadService downloadService;
 

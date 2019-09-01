@@ -2,7 +2,6 @@ package com.walterjwhite.linux.builder.api.service;
 
 import com.walterjwhite.linux.builder.api.model.BuildPhase;
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 
 public interface DistributionBootstrappingService {
   /**
@@ -12,7 +11,7 @@ public interface DistributionBootstrappingService {
    * @throws IOException
    * @throws InterruptedException
    */
-  void doBootstrap() throws IOException, InterruptedException, NoSuchAlgorithmException;
+  void doBootstrap() throws Exception;
 
   /**
    * Tasks to run before the given build phase (ie. gentoo/funtoo emerge --sync, emerge --newuse -uD
@@ -22,4 +21,6 @@ public interface DistributionBootstrappingService {
 
   /** Tasks to run after the given build phase (currently empty). */
   void doPostBuild(BuildPhase buildPhase) throws Exception;
+
+  default void doCompletion() throws Exception {}
 }

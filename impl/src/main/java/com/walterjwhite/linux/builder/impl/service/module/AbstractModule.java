@@ -8,7 +8,13 @@ import com.walterjwhite.linux.builder.api.service.Module;
 import com.walterjwhite.linux.builder.impl.service.enumeration.DistributionConfiguration;
 import com.walterjwhite.logging.annotation.ContextualLoggable;
 import com.walterjwhite.logging.annotation.ContextualLoggableField;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
+@Data
+@ToString(doNotUseGetters = true)
+@RequiredArgsConstructor
 @ContextualLoggable
 public abstract class AbstractModule<ConfigurationType extends Configurable>
     implements Module<ConfigurationType> {
@@ -25,62 +31,8 @@ public abstract class AbstractModule<ConfigurationType extends Configurable>
 
   protected final DistributionConfiguration distributionConfiguration;
 
-  protected AbstractModule(
-      BuildService buildService,
-      final BuildConfiguration buildConfiguration,
-      final DistributionConfiguration distributionConfiguration) {
-    super();
-    this.buildService = buildService;
-    this.buildConfiguration = buildConfiguration;
-    this.distributionConfiguration = distributionConfiguration;
-  }
-
   /** Called after initialization to ensure instance is fully ready to go. */
   public void onSetup() {}
-
-  public void setPatchName(String patchName) {
-    this.patchName = patchName;
-  }
-
-  public void setFilename(String filename) {
-    this.filename = filename;
-  }
-
-  public void setConfiguration(ConfigurationType configuration) {
-    this.configuration = configuration;
-  }
-
-  public void setBuildPhase(BuildPhase buildPhase) {
-    this.buildPhase = buildPhase;
-  }
-
-  public BuildConfiguration getBuildConfiguration() {
-    return buildConfiguration;
-  }
-
-  public DistributionConfiguration getDistributionConfiguration() {
-    return distributionConfiguration;
-  }
-
-  public BuildService getBuildService() {
-    return buildService;
-  }
-
-  public String getFilename() {
-    return filename;
-  }
-
-  public ConfigurationType getConfiguration() {
-    return configuration;
-  }
-
-  public BuildPhase getBuildPhase() {
-    return buildPhase;
-  }
-
-  public String getPatchName() {
-    return patchName;
-  }
 
   public boolean isRun() {
     return (configuration != null && configuration.isRun());

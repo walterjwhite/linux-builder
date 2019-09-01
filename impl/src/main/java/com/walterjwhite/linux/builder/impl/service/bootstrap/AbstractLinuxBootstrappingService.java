@@ -4,8 +4,6 @@ import com.walterjwhite.linux.builder.api.model.BuildPhase;
 import com.walterjwhite.linux.builder.api.model.configuration.BuildConfiguration;
 import com.walterjwhite.linux.builder.api.service.DistributionBootstrappingService;
 import java.io.File;
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 
 public abstract class AbstractLinuxBootstrappingService
     implements DistributionBootstrappingService {
@@ -17,7 +15,7 @@ public abstract class AbstractLinuxBootstrappingService
   }
 
   @Override
-  public void doBootstrap() throws IOException, InterruptedException, NoSuchAlgorithmException {
+  public void doBootstrap() throws Exception {
     // clear out /etc/fstab
     new File(buildConfiguration.getRootDirectory() + File.separator + "etc/fstab").delete();
   }

@@ -2,12 +2,12 @@ package com.walterjwhite.linux.builder.impl.service.module;
 
 import com.walterjwhite.download.api.model.Download;
 import com.walterjwhite.download.api.service.DownloadService;
+import com.walterjwhite.file.api.service.DirectoryCopierService;
 import com.walterjwhite.linux.builder.api.model.configuration.BuildConfiguration;
 import com.walterjwhite.linux.builder.api.model.configuration.ISOConfiguration;
 import com.walterjwhite.linux.builder.api.service.BuildService;
 import com.walterjwhite.linux.builder.impl.service.annotation.ModuleSupports;
 import com.walterjwhite.linux.builder.impl.service.enumeration.DistributionConfiguration;
-import com.walterjwhite.linux.builder.impl.service.util.CopyUtil;
 import com.walterjwhite.linux.builder.impl.service.util.configuration.YamlConfigurer;
 import com.walterjwhite.shell.api.enumeration.MountAction;
 import com.walterjwhite.shell.api.enumeration.VFSType;
@@ -23,13 +23,16 @@ import javax.inject.Inject;
  * extract root FS from ISO image
  */
 @ModuleSupports(
-  distribution = DistributionConfiguration.Linux,
-  configurer = YamlConfigurer.class,
-  configurationClass = ISOConfiguration.class
-)
+    distribution = DistributionConfiguration.Linux,
+    configurer = YamlConfigurer.class,
+    configurationClass = ISOConfiguration.class)
 public class IsoModule extends AbstractSingleModule<ISOConfiguration> {
+  public static final String ISO_FILE = "ISO-FILE";
+  public static final String ISO_ROOT_CONTENTS = "ISO-ROOT-CONTENTS";
+
   protected final DownloadService downloadService;
   protected final MountService mountService;
+  protected final DirectoryCopierService directoryCopierService;
 
   @Inject
   public IsoModule(
@@ -38,10 +41,12 @@ public class IsoModule extends AbstractSingleModule<ISOConfiguration> {
       DistributionConfiguration distributionConfiguration,
       DownloadService downloadService,
       MountService mountService,
+      DirectoryCopierService directoryCopierService,
       ShellExecutionService shellExecutionService) {
     super(buildService, buildConfiguration, distributionConfiguration);
     this.downloadService = downloadService;
     this.mountService = mountService;
+    this.directoryCopierService = directoryCopierService;
     this.shellExecutionService = shellExecutionService;
   }
 
@@ -91,14 +96,14 @@ public class IsoModule extends AbstractSingleModule<ISOConfiguration> {
             "/ISO-root-contents",
             buildConfiguration.getBuildDirectory()
                 + File.separator
-                + "ISO"
+                + isoFileMountPoint.getMountPoint()
                 + configuration.getRootFSPath(),
             VFSType.AUTO);
     try {
       doMount(isoFileMountPoint);
       doMount(targetFileMountPoint);
 
-      CopyUtil.copy(
+      directoryCopierService.copy(
           new File(buildConfiguration.getBuildDirectory() + File.separator + "ISO-root-contents")
               .toPath(),
           new File(buildConfiguration.getRootDirectory()).toPath());

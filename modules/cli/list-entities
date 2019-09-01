@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#mvn dependency:tree | grep model | grep -Po "com.walterjwhite.*$" | less
+
+#_PROJECTS = ( modules/file/api/model infrastructure/datastore/api/model 
+_LINUX_BUILDER=modules/linux-builder/modules/cli/providers/guice
+
+OLDPWD=$(pwd)
+
+cd $_LINUX_BUILDER
+_PROJECTS=$(mvn dependency:tree | grep model | grep -Po "com.walterjwhite.*$" | sed -e "s/^com.walterjwhite.java.//" | sed -e "s/\:.*$//" | sed -e "s/\./\//g")
+cd $OLDPWD
+
+for _PROJECT in ${_PROJECTS[@]}
+do
+	#echo -e $_PROJECT/model
+	grep -l @Entity $(find $_PROJECT/model/src/main/java -type f | grep \\.java$) | grep -Po "com/walterjwhite.*.java$" | sed -e "s/\.java$//" | sed -e "s/\//\./g"
+done | sort -u | sed -e "s/^/\<class\>/" | sed -e "s/$/\<\/class\>/"

@@ -1,9 +1,6 @@
 package com.walterjwhite.linux.builder.impl.service.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +28,7 @@ public class IOUtil {
 
   public static Object read(final String filename /*, final Class clazz*/)
       throws FileNotFoundException {
-    return YAML.load(new FileInputStream(filename));
+    return YAML.load(new BufferedInputStream(new FileInputStream(filename)));
   }
 
   public static String write(final Object object) {

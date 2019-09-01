@@ -2,11 +2,8 @@ package com.walterjwhite.linux.builder.impl.service;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ReflectionTest {
-  private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionTest.class);
 
   public static void main(final String[] arguments)
       throws IOException, NoSuchMethodException, IllegalAccessException, InstantiationException,

@@ -28,6 +28,14 @@ public class SnapPackageManagementService implements PackageManagementService {
     this.rootDirectory = buildConfiguration.getRootDirectory();
   }
 
+  protected void setup() throws Exception {
+    doRun("service snapd start");
+  }
+
+  protected void cleanup() throws Exception {
+    doRun("service snapd stop");
+  }
+
   @Override
   public void install(String... packageNames) throws Exception {
     final List<String> arguments = new ArrayList<>();
@@ -54,8 +62,13 @@ public class SnapPackageManagementService implements PackageManagementService {
     run("snap refresh");
   }
 
-  protected ShellCommand run(final String commandLineArgument) throws Exception {
+  protected void run(final String commandLineArgument) throws Exception {
+    setup();
+    doRun(commandLineArgument);
+    cleanup();
+  }
 
+  protected ShellCommand doRun(final String commandLineArgument) throws Exception {
     return shellExecutionService.run(
         shellCommandBuilder
             .buildChroot()
@@ -65,7 +78,7 @@ public class SnapPackageManagementService implements PackageManagementService {
 
   @Override
   public boolean isInstalled(String packageName) throws Exception {
-    final ShellCommand shellCommand = run("dpkg -l " + packageName);
+    final ShellCommand shellCommand = doRun("dpkg -l " + packageName);
     for (CommandOutput commandOutput : shellCommand.getOutputs()) {
       final String outputPackageName = commandOutput.getOutput().split(" ")[1];
       if (packageName.equals(outputPackageName)) return true;

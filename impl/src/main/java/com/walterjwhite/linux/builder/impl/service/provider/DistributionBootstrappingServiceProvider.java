@@ -1,6 +1,6 @@
 package com.walterjwhite.linux.builder.impl.service.provider;
 
-import com.walterjwhite.google.guice.GuiceHelper;
+import com.walterjwhite.infrastructure.inject.core.helper.ApplicationHelper;
 import com.walterjwhite.linux.builder.api.service.DistributionBootstrappingService;
 import com.walterjwhite.linux.builder.impl.service.enumeration.DistributionConfiguration;
 import javax.inject.Inject;
@@ -20,7 +20,8 @@ public class DistributionBootstrappingServiceProvider
 
   @Override
   public DistributionBootstrappingService get() {
-    return GuiceHelper.getGuiceInjector()
+    return ApplicationHelper.getApplicationInstance()
+        .getInjector()
         .getInstance(distributionConfiguration.getImplementingBootstrappingServiceClass());
   }
 }

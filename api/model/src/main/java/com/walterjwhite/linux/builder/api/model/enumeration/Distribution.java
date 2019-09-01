@@ -5,5 +5,6 @@ public enum Distribution {
   Fedora,
   Funtoo,
   Gentoo,
-  Ubuntu;
+  Ubuntu,
+  FreeBSD;
 }

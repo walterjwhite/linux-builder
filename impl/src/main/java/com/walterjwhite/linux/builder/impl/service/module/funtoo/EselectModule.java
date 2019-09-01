@@ -14,10 +14,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 @ModuleSupports(
-  distribution = DistributionConfiguration.Gentoo,
-  configurer = ListConfigurer.class,
-  configurationClass = StringConfiguration.class
-)
+    distribution = DistributionConfiguration.Gentoo,
+    configurer = ListConfigurer.class,
+    configurationClass = StringConfiguration.class)
 public class EselectModule extends AbstractCollectionModule<StringConfiguration> {
   protected final ShellExecutionService shellExecutionService;
   protected final ShellCommandBuilder shellCommandBuilder;

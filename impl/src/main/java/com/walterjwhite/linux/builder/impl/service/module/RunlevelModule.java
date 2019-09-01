@@ -11,10 +11,9 @@ import com.walterjwhite.linux.builder.impl.service.util.configuration.YamlConfig
 import javax.inject.Inject;
 
 @ModuleSupports(
-  distribution = DistributionConfiguration.Linux,
-  configurer = YamlConfigurer.class,
-  configurationClass = Runlevel.class
-)
+    distribution = DistributionConfiguration.Linux,
+    configurer = YamlConfigurer.class,
+    configurationClass = Runlevel.class)
 public class RunlevelModule extends AbstractCollectionModule<Runlevel> {
   protected final RunlevelManagementService runlevelManagementService;
 
@@ -30,7 +29,7 @@ public class RunlevelModule extends AbstractCollectionModule<Runlevel> {
 
   //  public void onSetup() {
   //    runlevelManagementService =
-  //        GuiceHelper.getGuiceInjector().getInstance(get(distributionConfiguration));
+  //        GuiceHelper.getGuiceApplicationInjector().getInstance(get(distributionConfiguration));
   //    runlevelManagementService.setRootDirectory(buildConfiguration.getRootDirectory());
   //  }
 

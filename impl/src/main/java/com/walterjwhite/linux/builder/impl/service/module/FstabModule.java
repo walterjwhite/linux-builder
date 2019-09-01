@@ -14,10 +14,9 @@ import org.apache.commons.io.FileUtils;
 
 /** Writes the fstab */
 @ModuleSupports(
-  distribution = DistributionConfiguration.Linux,
-  configurer = YamlConfigurer.class,
-  configurationClass = MountPointConfiguration.class
-)
+    distribution = DistributionConfiguration.Linux,
+    configurer = YamlConfigurer.class,
+    configurationClass = MountPointConfiguration.class)
 public class FstabModule extends AbstractCollectionModule<MountPointConfiguration> {
   public static final String FSTAB_TEMPLATE = "%s %s %s %s 0 0 # %s\n";
 

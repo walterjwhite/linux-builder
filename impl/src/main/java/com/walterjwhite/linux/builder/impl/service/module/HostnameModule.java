@@ -8,17 +8,12 @@ import com.walterjwhite.linux.builder.impl.service.annotation.ModuleSupports;
 import com.walterjwhite.linux.builder.impl.service.enumeration.DistributionConfiguration;
 import com.walterjwhite.linux.builder.impl.service.util.configuration.StringConfigurer;
 import javax.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @ModuleSupports(
-  distribution = DistributionConfiguration.Linux,
-  configurer = StringConfigurer.class,
-  configurationClass = StringConfiguration.class
-)
+    distribution = DistributionConfiguration.Linux,
+    configurer = StringConfigurer.class,
+    configurationClass = StringConfiguration.class)
 public class HostnameModule extends AbstractSingleModule<StringConfiguration> {
-  private static final Logger LOGGER = LoggerFactory.getLogger(HostnameModule.class);
-
   protected final HostnameService hostnameService;
 
   @Inject
@@ -29,17 +24,6 @@ public class HostnameModule extends AbstractSingleModule<StringConfiguration> {
       HostnameService hostnameService) {
     super(buildService, buildConfiguration, distributionConfiguration);
     this.hostnameService = hostnameService;
-  }
-
-  protected Class<? extends HostnameService> getHostnameServiceClass() {
-    Class<? extends HostnameService> hostnameServiceClass =
-        distributionConfiguration.getHostnameServiceClass();
-
-    if (hostnameServiceClass != null) {
-      return (hostnameServiceClass);
-    }
-
-    return (distributionConfiguration.getParent().getHostnameServiceClass());
   }
 
   @Override

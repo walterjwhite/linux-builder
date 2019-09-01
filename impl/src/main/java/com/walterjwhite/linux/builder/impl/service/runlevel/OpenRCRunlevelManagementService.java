@@ -29,27 +29,46 @@ public class OpenRCRunlevelManagementService implements RunlevelManagementServic
   @Override
   public void add(Runlevel runlevel) throws Exception {
     // ensure the runlevel directory exists before attempting to add anything to it
-    final File runlevelDirectory =
-        new File(rootDirectory + "/etc/runlevels/" + runlevel.getRunlevel());
+    final File runlevelDirectory = getRunlevelDirectory(runlevel);
     if (!runlevelDirectory.exists()) {
       runlevelDirectory.mkdirs();
     }
 
-    shellExecutionService.run(
-        shellCommandBuilder
-            .buildChroot()
-            .withChrootPath(rootDirectory)
-            .withCommandLine(
-                "rc-update add " + runlevel.getServiceName() + " " + runlevel.getRunlevel()));
+    if (!isEnabled(runlevel)) {
+      shellExecutionService.run(
+          shellCommandBuilder
+              .buildChroot()
+              .withChrootPath(rootDirectory)
+              .withCommandLine(
+                  "rc-update add " + runlevel.getServiceName() + " " + runlevel.getRunlevel()));
+    }
   }
 
   @Override
   public void remove(Runlevel runlevel) throws Exception {
-    shellExecutionService.run(
-        shellCommandBuilder
-            .buildChroot()
-            .withChrootPath(rootDirectory)
-            .withCommandLine(
-                "rc-update delete " + runlevel.getServiceName() + " " + runlevel.getRunlevel()));
+    if (isEnabled(runlevel))
+      shellExecutionService.run(
+          shellCommandBuilder
+              .buildChroot()
+              .withChrootPath(rootDirectory)
+              .withCommandLine(
+                  "rc-update delete " + runlevel.getServiceName() + " " + runlevel.getRunlevel()));
+  }
+
+  protected boolean isEnabled(Runlevel runlevel) {
+    return getRunlevelFile(runlevel).exists();
+  }
+
+  protected File getRunlevelFile(Runlevel runlevel) {
+    return new File(
+        rootDirectory
+            + "/etc/runlevels/"
+            + runlevel.getRunlevel()
+            + "/"
+            + runlevel.getServiceName());
+  }
+
+  protected File getRunlevelDirectory(Runlevel runlevel) {
+    return new File(rootDirectory + "/etc/runlevels/" + runlevel.getRunlevel());
   }
 }

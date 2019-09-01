@@ -1,25 +1,24 @@
 package com.walterjwhite.linux.builder.impl.service.scm;
 
-import com.walterjwhite.linux.builder.api.model.SCMTag;
-import com.walterjwhite.linux.builder.api.service.SCMTagPatchWriterService;
+import com.walterjwhite.linux.builder.api.model.configuration.BuildConfiguration;
+import com.walterjwhite.scm.api.model.SCMTag;
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.nio.charset.Charset;
+import java.time.format.DateTimeFormatter;
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DefaultSCMTagPatchWriterService implements SCMTagPatchWriterService {
-  private static final Logger LOGGER =
-      LoggerFactory.getLogger(DefaultSCMTagPatchWriterService.class);
 
-  private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd hh:mm:ss";
-  private static final DateFormat DATE_FORMAT = new SimpleDateFormat((DATE_FORMAT_PATTERN));
+  //  private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd hh:mm:ss";
+  //  private static final DateFormat DATE_FORMAT = new SimpleDateFormat((DATE_FORMAT_PATTERN));
+
+  private static final DateTimeFormatter DATE_TIME_FORMATTER =
+      DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
 
   private static final String TAG_TEMPLATE =
       "# auto-generated via linux-builder @ %s\n\n"
-          + "build date: %s\n"
+          + "builddate: %s\n"
           + "variant: %s\n"
           + "scm tag: %s\n"
           + "scm date: %s\n"
@@ -35,7 +34,7 @@ public class DefaultSCMTagPatchWriterService implements SCMTagPatchWriterService
   }
 
   @Override
-  public void write(SCMTag scmTag) throws IOException {
+  public void write(BuildConfiguration buildConfiguration, SCMTag scmTag) throws IOException {
     final File patchFile =
         new File(
             localRepositoryPath
@@ -67,17 +66,19 @@ public class DefaultSCMTagPatchWriterService implements SCMTagPatchWriterService
         String.format(
             TAG_TEMPLATE,
             getSystemVersion(),
-            DATE_FORMAT.format(scmTag.getBuildDate()),
-            scmTag.getVariant(),
+            buildConfiguration.getBuildDate().format(DATE_TIME_FORMATTER),
+            buildConfiguration.getVariant(),
             scmTag.getTag(),
-            DATE_FORMAT.format(scmTag.getCommitDate()),
+            scmTag.getCommitDate().format(DATE_TIME_FORMATTER),
             scmTag.getScmVersionId(),
             scmTag.getCommitMessage());
 
     tagFile.getParentFile().mkdirs();
-    FileUtils.write(tagFile, contents, "UTF-8");
+    FileUtils.write(tagFile, contents, Charset.defaultCharset() /*"UTF-8"*/);
   }
 
+  // TODO: implement a standard means to get the system version, build date, etc. (wrap the Java
+  // API)
   private static final String getSystemVersion() {
     return (DefaultSCMTagPatchWriterService.class.getPackage().getImplementationVersion());
   }

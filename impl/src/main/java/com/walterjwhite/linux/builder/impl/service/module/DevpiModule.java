@@ -14,10 +14,9 @@ import javax.inject.Inject;
 
 @ContextualLoggable
 @ModuleSupports(
-  distribution = DistributionConfiguration.Linux,
-  configurer = StringConfigurer.class,
-  configurationClass = StringConfiguration.class
-)
+    distribution = DistributionConfiguration.Linux,
+    configurer = StringConfigurer.class,
+    configurationClass = StringConfiguration.class)
 public class DevpiModule extends PipModule {
   @Inject
   public DevpiModule(
