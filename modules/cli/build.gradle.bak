@@ -1,0 +1,9 @@
+group = 'com.walterjwhite.modules.linux-builder.modules'
+description = 'linux-builder - modules - cli'
+dependencies {
+    compile group: 'com.walterjwhite.infrastructure.dependencies', name: 'h2', version:'0.0.15-SNAPSHOT'
+    compile group: 'com.walterjwhite.infrastructure.dependencies', name: 'p6spy', version:'0.0.15-SNAPSHOT'
+    compile group: 'com.walterjwhite.infrastructure.dependencies', name: 'hikari-jdbc-connection-pool', version:'0.0.15-SNAPSHOT'
+    compile group: 'com.walterjwhite.infrastructure.dependencies', name: 'hibernate-hikari', version:'0.0.15-SNAPSHOT'
+    compile group: 'com.walterjwhite.infrastructure.google-guice.modules', name: 'cli', version:'0.0.15-SNAPSHOT'
+}

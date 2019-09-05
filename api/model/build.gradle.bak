@@ -1,0 +1,6 @@
+group = 'com.walterjwhite.modules.linux-builder.api'
+description = 'linux-builder - API - model'
+dependencies {
+    compile group: 'com.walterjwhite.modules.download.api', name: 'model', version:'0.0.15-SNAPSHOT'
+    compile group: 'com.walterjwhite.modules.shell.api', name: 'model', version:'0.0.15-SNAPSHOT'
+}

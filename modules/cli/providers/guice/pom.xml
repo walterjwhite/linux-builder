@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.walterjwhite.java.modules.linux-builder.modules.cli</groupId>
     <artifactId>providers</artifactId>
-    <version>0.0.15-SNAPSHOT</version>
+    <version>0.0.17-SNAPSHOT</version>
   </parent>
   <groupId>com.walterjwhite.java.modules.linux-builder.modules.cli.providers</groupId>
   <artifactId>guice</artifactId>
@@ -14,68 +14,68 @@
     <dependency>
       <groupId>com.walterjwhite.java.configuration.cli</groupId>
       <artifactId>guice</artifactId>
-      <version>0.0.15-SNAPSHOT</version>
+      <version>0.0.17-SNAPSHOT</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>com.walterjwhite.java.infrastructure.datastore.providers.jpa.providers</groupId>
       <artifactId>google-guice-persist</artifactId>
-      <version>0.0.15-SNAPSHOT</version>
+      <version>0.0.17-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.walterjwhite.java.infrastructure.datastore.providers.jpa.providers</groupId>
       <artifactId>google-guice-persist-criteria-builder</artifactId>
-      <version>0.0.15-SNAPSHOT</version>
+      <version>0.0.17-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.walterjwhite.java.modules.shell.providers</groupId>
       <artifactId>criteria</artifactId>
-      <version>0.0.15-SNAPSHOT</version>
+      <version>0.0.17-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.walterjwhite.java.modules.file.modules.tar-directory-copier.providers</groupId>
       <artifactId>guice</artifactId>
-      <version>0.0.15-SNAPSHOT</version>
+      <version>0.0.17-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.walterjwhite.java.modules.compression.modules.xz.providers</groupId>
       <artifactId>guice</artifactId>
-      <version>0.0.15-SNAPSHOT</version>
+      <version>0.0.17-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.walterjwhite.java.modules.encryption.providers</groupId>
       <artifactId>guice</artifactId>
-      <version>0.0.15-SNAPSHOT</version>
+      <version>0.0.17-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.walterjwhite.java.modules.file.providers.local.providers</groupId>
       <artifactId>guice</artifactId>
-      <version>0.0.15-SNAPSHOT</version>
+      <version>0.0.17-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.walterjwhite.java.modules.shell.providers</groupId>
       <artifactId>guice</artifactId>
-      <version>0.0.15-SNAPSHOT</version>
+      <version>0.0.17-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.walterjwhite.java.modules.ssh.providers</groupId>
       <artifactId>guice</artifactId>
-      <version>0.0.15-SNAPSHOT</version>
+      <version>0.0.17-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.walterjwhite.java.modules.scm.providers.git-cli.providers</groupId>
       <artifactId>guice</artifactId>
-      <version>0.0.15-SNAPSHOT</version>
+      <version>0.0.17-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.walterjwhite.java.modules.download.providers.commons-io.providers</groupId>
       <artifactId>guice</artifactId>
-      <version>0.0.15-SNAPSHOT</version>
+      <version>0.0.17-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.walterjwhite.java.dependencies</groupId>
       <artifactId>h2</artifactId>
-      <version>0.0.15-SNAPSHOT</version>
+      <version>0.0.17-SNAPSHOT</version>
       <type>pom</type>
     </dependency>
   </dependencies>
@@ -91,7 +91,7 @@
         <dependency>
           <groupId>com.walterjwhite.java.dependencies</groupId>
           <artifactId>p6spy</artifactId>
-          <version>0.0.15-SNAPSHOT</version>
+          <version>0.0.17-SNAPSHOT</version>
           <type>pom</type>
         </dependency>
       </dependencies>

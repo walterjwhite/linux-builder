@@ -1,7 +1,7 @@
 package com.walterjwhite.linux.builder.impl.service.scm;
 
 import com.walterjwhite.linux.builder.api.model.configuration.BuildConfiguration;
-import com.walterjwhite.scm.api.SCMService;
+import com.walterjwhite.ssh.api.SCMService;
 import java.io.File;
 import java.io.IOException;
 import javax.inject.Inject;

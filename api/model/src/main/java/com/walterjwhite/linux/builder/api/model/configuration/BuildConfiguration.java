@@ -1,7 +1,7 @@
 package com.walterjwhite.linux.builder.api.model.configuration;
 
 import com.walterjwhite.linux.builder.api.model.enumeration.Distribution;
-import com.walterjwhite.scm.api.model.SCMConfiguration;
+import com.walterjwhite.ssh.api.model.SCMConfiguration;
 import java.io.File;
 import java.time.LocalDateTime;
 import lombok.Builder;
