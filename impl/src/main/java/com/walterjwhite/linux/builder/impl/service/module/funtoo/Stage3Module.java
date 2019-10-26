@@ -72,14 +72,31 @@ public class Stage3Module extends AbstractSingleModule<Stage3Configuration> {
     if (isChrootEnvironmentSetup()) return false;
 
     // ensure we use the latest stage3
-    final File checksumFile = downloadService.download(new Download(stage3ChecksumUri));
-    final File stage3File = downloadService.download(new Download(stage3Uri), checksumFile);
+    // avoid clobbering other stage3's
+    final File checksumFile =
+        downloadService.download(
+            new Download(
+                stage3ChecksumUri, null, getStageFilename(configuration, stage3ChecksumUri)));
+    final File stage3File =
+        downloadService.download(
+            new Download(stage3Uri, null, getStageFilename(configuration, stage3Uri)),
+            checksumFile);
 
     extractStage3File(stage3File);
     removeVarGit();
     removeUsrSrc();
 
     return true;
+  }
+
+  public static String getStageFilename(
+      final Stage3Configuration configuration, final String stageUri) {
+    return String.format(
+        "%s.%s.%s.%s",
+        configuration.getBuild(),
+        configuration.getSubArchitecture().getArchitecture().getName(),
+        configuration.getSubArchitecture().getName(),
+        Download.getFilename(stageUri));
   }
 
   protected boolean isChrootEnvironmentSetup() {

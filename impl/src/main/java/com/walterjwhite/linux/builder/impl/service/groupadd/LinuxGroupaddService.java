@@ -31,7 +31,7 @@ public class LinuxGroupaddService implements GroupaddService {
     try {
       if (!LinuxGroupsService.doesGroupExist(
           buildConfiguration.getRootDirectory(), groupadd.getGroupName())) {
-        throw (new IllegalStateException("Group " + groupadd.getGroupName() + " does not exist."));
+        throw new IllegalStateException("Group " + groupadd.getGroupName() + " does not exist.");
       }
     } catch (IOException e) {
       throw new RuntimeException("Error checking if group already exists.", e);

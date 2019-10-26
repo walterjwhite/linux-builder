@@ -111,7 +111,7 @@ public class UnixHostInstallationService implements InstallationService {
   protected void installOnHost(String packagePath, final String host, final String rootDirectory) {
     //    // temporary hack
     //    if (packagePath == null) packagePath = "/builds/linux/router-master.squashfs";
-    if (packagePath == null) throw (new IllegalArgumentException("Package path cannot be null."));
+    if (packagePath == null) throw new IllegalArgumentException("Package path cannot be null.");
 
     try {
       // determine where to install the image
@@ -205,7 +205,7 @@ public class UnixHostInstallationService implements InstallationService {
       }
     }
 
-    throw (new IllegalStateException("Unable to get current root."));
+    throw new IllegalStateException("Unable to get current root.");
   }
 
   protected File getGrubBootloaderConfiguration(final String host) throws Exception {

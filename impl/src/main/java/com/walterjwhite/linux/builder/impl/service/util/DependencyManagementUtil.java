@@ -21,7 +21,7 @@ public class DependencyManagementUtil {
       }
     }
 
-    throw (new IllegalStateException("Patch : " + patchName + " not found."));
+    throw new IllegalStateException("Patch : " + patchName + " not found.");
   }
 
   private static Set<String> getSystemPatches(final String repositoryPath, final String variant)
@@ -136,7 +136,7 @@ public class DependencyManagementUtil {
   private static void checkForCycle(Set<Patch> patches) {
     for (Patch patch : patches) {
       if (!patch.getInEdges().isEmpty()) {
-        throw (new IllegalStateException("Cycle detected, blew up."));
+        throw new IllegalStateException("Cycle detected, blew up.");
       }
     }
   }
@@ -148,7 +148,7 @@ public class DependencyManagementUtil {
       }
     }
 
-    throw (new IllegalStateException("Unable to resolve dependency for:" + systemPatchName));
+    throw new IllegalStateException("Unable to resolve dependency for:" + systemPatchName);
   }
 
   private static boolean doesVariantExist(final String filename, final String variant) {

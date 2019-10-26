@@ -94,7 +94,7 @@ public class ModuleFactory {
       return (modules);
     }
 
-    // throw (new IllegalArgumentException("Unsupported build phase."));
+    // throw new IllegalArgumentException("Unsupported build phase."));
     return (null);
   }
 

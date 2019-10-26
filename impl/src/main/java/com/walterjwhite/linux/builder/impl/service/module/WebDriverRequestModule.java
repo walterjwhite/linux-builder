@@ -92,7 +92,7 @@ public class WebDriverRequestModule extends AbstractCollectionModule<WebDriverRe
       webElement = webDriver.findElement(By.xpath(webDriverRequest.getArgument()));
     } else if (WebDriverAction.Click.equals(webDriverRequest.getAction())) {
       if (webElement == null) {
-        throw (new IllegalStateException("cli element is null"));
+        throw new IllegalStateException("cli element is null");
       }
 
       webElement.click();

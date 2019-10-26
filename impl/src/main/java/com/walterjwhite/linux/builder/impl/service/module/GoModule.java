@@ -3,10 +3,12 @@ package com.walterjwhite.linux.builder.impl.service.module;
 import com.walterjwhite.linux.builder.api.model.configuration.BuildConfiguration;
 import com.walterjwhite.linux.builder.api.model.configuration.StringConfiguration;
 import com.walterjwhite.linux.builder.api.service.BuildService;
+import com.walterjwhite.linux.builder.impl.service.GoPath;
 import com.walterjwhite.linux.builder.impl.service.annotation.ModuleSupports;
 import com.walterjwhite.linux.builder.impl.service.enumeration.DistributionConfiguration;
 import com.walterjwhite.linux.builder.impl.service.util.configuration.StringConfigurer;
 import com.walterjwhite.logging.annotation.ContextualLoggable;
+import com.walterjwhite.property.impl.annotation.Property;
 import com.walterjwhite.shell.api.model.ShellCommand;
 import com.walterjwhite.shell.api.model.ShellCommandEnvironmentProperty;
 import com.walterjwhite.shell.api.service.ShellExecutionService;
@@ -25,6 +27,7 @@ import javax.inject.Inject;
 public class GoModule extends AbstractSingleModule<StringConfiguration> {
   protected final ShellExecutionService shellExecutionService;
   protected final ShellCommandBuilder shellCommandBuilder;
+  protected final String goPath;
 
   @Inject
   public GoModule(
@@ -32,10 +35,12 @@ public class GoModule extends AbstractSingleModule<StringConfiguration> {
       BuildConfiguration buildConfiguration,
       DistributionConfiguration distributionConfiguration,
       ShellExecutionService shellExecutionService,
-      ShellCommandBuilder shellCommandBuilder) {
+      ShellCommandBuilder shellCommandBuilder,
+      @Property(GoPath.class) String goPath) {
     super(buildService, buildConfiguration, distributionConfiguration);
     this.shellExecutionService = shellExecutionService;
     this.shellCommandBuilder = shellCommandBuilder;
+    this.goPath = goPath;
   }
 
   @Override
@@ -48,8 +53,8 @@ public class GoModule extends AbstractSingleModule<StringConfiguration> {
         new ShellCommandEnvironmentProperty();
 
     // TODO: inject this or expand the configuration to allow this as an option
-    goPathEnvironmentProperty.setKey("GOPATH");
-    goPathEnvironmentProperty.setValue("/usr/local");
+    goPathEnvironmentProperty.setKey(GoPath.ENVIRONMENT_KEY);
+    goPathEnvironmentProperty.setValue(goPath);
 
     final ShellCommand shellCommand =
         shellCommandBuilder
@@ -57,6 +62,7 @@ public class GoModule extends AbstractSingleModule<StringConfiguration> {
             .withChrootPath(buildConfiguration.getRootDirectory())
             .withCommandLine(String.join(" ", getArguments(goPackages)));
     shellCommand.getShellCommandEnvironmentProperties().add(goPathEnvironmentProperty);
+    goPathEnvironmentProperty.setShellCommand(shellCommand);
     shellExecutionService.run(shellCommand);
   }
 

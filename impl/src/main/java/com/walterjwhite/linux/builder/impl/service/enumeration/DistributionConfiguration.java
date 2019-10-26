@@ -259,6 +259,6 @@ public enum DistributionConfiguration {
       }
     }
 
-    throw (new IllegalStateException("Configurable not found for distribution:" + distribution));
+    throw new IllegalStateException("Configurable not found for distribution:" + distribution);
   }
 }

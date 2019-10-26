@@ -21,6 +21,6 @@
 //      }
 //    }
 //
-//    throw (new IllegalStateException("Unable to determine the build phase for:" + filename));
+//    throw new IllegalStateException("Unable to determine the build phase for:" + filename));
 //  }
 // }
