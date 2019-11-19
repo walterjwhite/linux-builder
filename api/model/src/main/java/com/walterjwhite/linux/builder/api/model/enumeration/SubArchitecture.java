@@ -233,6 +233,6 @@ public enum SubArchitecture {
   private final InstructionSet[] instructionSets;
 
   public String getName() {
-    return (name().toLowerCase());
+    return (name().toLowerCase().replace("_", "-"));
   }
 }

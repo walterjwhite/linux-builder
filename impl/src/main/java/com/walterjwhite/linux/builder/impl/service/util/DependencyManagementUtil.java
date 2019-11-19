@@ -5,11 +5,12 @@ import com.walterjwhite.linux.builder.api.model.patch.PatchEdge;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /** Finds all of the patches and determines the order to runInChroot them. */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DependencyManagementUtil {
-  private DependencyManagementUtil() {}
-
   public static Patch getPatchByName(
       final String repositoryPath, final String variant, final String patchName)
       throws IOException {

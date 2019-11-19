@@ -19,6 +19,7 @@ public class ConfigurationUtil {
         (ModuleSupports) moduleClass.getAnnotation(ModuleSupports.class);
     return (moduleSupports
         .configurer()
+        .getDeclaredConstructor()
         .newInstance()
         .read(
             moduleConfigurationFile,

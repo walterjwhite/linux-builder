@@ -169,10 +169,10 @@ public class Stage3Module extends AbstractSingleModule<Stage3Configuration> {
     if (configuration.getMirrors() != null)
       buffer.append("GENTOO_MIRRORS=\"" + String.join(" ", configuration.getMirrors()) + "\"\n");
 
-    buffer.append("USE=\"\"\n");
-    buffer.append("VIDEO_CARDS=\"\"\n");
-    buffer.append("SANE_BACKENDS=\"\"\n");
-    buffer.append("LINGUAS=\"\"\n");
+    // buffer.append("USE=\"\"\n");
+    // buffer.append("VIDEO_CARDS=\"\"\n");
+    // buffer.append("SANE_BACKENDS=\"\"\n");
+    // buffer.append("LINGUAS=\"\"\n");
     buffer.append("\n");
 
     return (buffer.toString());

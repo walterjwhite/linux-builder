@@ -3,24 +3,18 @@ package com.walterjwhite.linux.builder.impl.service.bootstrap;
 import com.walterjwhite.linux.builder.api.model.BuildPhase;
 import com.walterjwhite.linux.builder.api.model.configuration.BuildConfiguration;
 import com.walterjwhite.linux.builder.api.service.PackageManagementService;
-import com.walterjwhite.shell.api.service.ShellExecutionService;
 import java.io.File;
 import javax.inject.Inject;
 import org.apache.commons.io.FileUtils;
 
 /** For the time-being, this is identical to Gentoo ... */
 public class GentooBootstrappingService extends AbstractLinuxBootstrappingService {
-  protected final ShellExecutionService shellExecutionService;
-
   protected final PackageManagementService packageManagementService;
 
   @Inject
   public GentooBootstrappingService(
-      ShellExecutionService shellExecutionService,
-      BuildConfiguration buildConfiguration,
-      PackageManagementService packageManagementService) {
+      BuildConfiguration buildConfiguration, PackageManagementService packageManagementService) {
     super(buildConfiguration);
-    this.shellExecutionService = shellExecutionService;
     this.packageManagementService = packageManagementService;
   }
 
